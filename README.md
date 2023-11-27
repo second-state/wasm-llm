@@ -8,7 +8,14 @@ Before building `wasm-chat`, make sure that `maturin` is installed in your envir
 pip install maturin
 ```
 
-Then, build `wasm-chat` with the following command:
+Then, build `wasm-chat` for release with the following command:
+
+```bash
+cd wasm-chat
+maturin build -r
+```
+
+If you want to build `wasm-chat` for test, use the following command:
 
 ```bash
 maturin develop
@@ -32,5 +39,7 @@ curl -LO https://huggingface.co/second-state/TinyLlama-1.1B-Chat-v0.3-GGUF/resol
 ## Test
 
 ```bash
-python test.py --model_file tinyllama-1.1b-chat-v0.3.Q5_K_M.gguf --wasm_file ../wasm-llm/target/wasm32-wasi/release/inference.wasm
+cd wasm-chat
+
+python test.py tinyllama-1.1b-chat-v0.3.Q5_K_M.gguf ../wasm-infer/target/wasm32-wasi/release/wasm_infer.wasm
 ```
