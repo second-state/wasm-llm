@@ -1,6 +1,15 @@
 from wasm_chat import *
 
+import argparse
+
 def main():
+    parser = argparse.ArgumentParser(description='Wasm Chat')
+    parser.add_argument('--model_file', type=str, default='tinyllama-1.1b-chat-v0.3.Q5_K_M.gguf',
+                        help='model file to run')
+    parser.add_argument('--wasm_file', type=str, help='Path to wasm-infer.wasm')
+    args = parser.parse_args()
+
+
     model_file = "/Volumes/Dev/secondstate/me/pyo3/wasm-chat/tinyllama-1.1b-chat-v0.3.Q5_K_M.gguf"
     model_alias = "default"
     wasm_file = "/Volumes/Dev/secondstate/me/wasm-llm/target/wasm32-wasi/release/inference.wasm"
