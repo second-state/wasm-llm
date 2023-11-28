@@ -148,6 +148,17 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "baf1de4339761588bc0619e3cbc0120ee582ebb74b53b4efbf79117bd2da40fd"
 
 [[package]]
+name = "chat-prompts"
+version = "0.3.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a39dee2c10eb60ab63c77737371781bc4d14c83f0176a38217964aee1a34cfc4"
+dependencies = [
+ "endpoints",
+ "enum_dispatch",
+ "thiserror",
+]
+
+[[package]]
 name = "clang-sys"
 version = "1.6.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -237,6 +248,18 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e3fd798e75f3be6df66c205c06fc5da481de054500948dabad3a4a10b1fe9b86"
 dependencies = [
  "serde",
+]
+
+[[package]]
+name = "enum_dispatch"
+version = "0.3.12"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8f33313078bb8d4d05a2733a94ac4c2d8a0df9a2b84424ebf4f33bfc224a890e"
+dependencies = [
+ "once_cell",
+ "proc-macro2",
+ "quote",
+ "syn 2.0.39",
 ]
 
 [[package]]
@@ -1501,6 +1524,7 @@ checksum = "0d046c5d029ba91a1ed14da14dca44b68bf2f124cfbaf741c54151fdb3e0750b"
 name = "wasm-chat"
 version = "0.1.0"
 dependencies = [
+ "chat-prompts",
  "endpoints",
  "once_cell",
  "pyo3",
