@@ -24,11 +24,16 @@ fn wasm_chat(_py: Python, m: &PyModule) -> PyResult<()> {
 #[derive(Debug)]
 pub struct WasmChat {
     dock: VmDock,
+    template_ty: PromptTemplateType,
 }
 #[pymethods]
 impl WasmChat {
     #[new]
-    pub fn new(model_file: String, wasm_file: String) -> Result<Self, WasmChatError> {
+    pub fn new(
+        model_file: String,
+        wasm_file: String,
+        template_ty: PromptTemplateType,
+    ) -> Result<Self, WasmChatError> {
         let wasm_file = Path::new(&wasm_file);
 
         // load wasinn-pytorch-plugin from the default plugin directory: /usr/local/lib/wasmedge
@@ -72,6 +77,7 @@ impl WasmChat {
 
         Ok(WasmChat {
             dock: VmDock::new(vm),
+            template_ty,
         })
     }
 
@@ -90,20 +96,20 @@ impl WasmChat {
         Ok(())
     }
 
-    pub fn infer(
-        &self,
-        data: String,
-        template_ty: PromptTemplateType,
-    ) -> Result<String, WasmChatError> {
+    pub fn generate_prompt_str(&self, data: String) -> Result<String, WasmChatError> {
         let mut chat_request: ChatCompletionRequest =
             serde_json::from_str(&data).map_err(|e| WasmChatError::Operation(e.to_string()))?;
 
-        let template = create_prompt_template(template_ty.clone());
+        let template = create_prompt_template(&self.template_ty);
 
         let prompt = template
             .build(&mut chat_request.messages)
             .map_err(|e| WasmChatError::Operation(e.to_string()))?;
 
+        Ok(prompt)
+    }
+
+    pub fn infer(&self, prompt: String) -> Result<String, WasmChatError> {
         let param_prompt = Param::String(prompt.as_ref());
         let infer_params = vec![param_prompt];
 
@@ -114,7 +120,7 @@ impl WasmChat {
         {
             Ok(mut res) => {
                 let output = res.pop().unwrap().downcast::<String>().unwrap();
-                let message = post_process(*output, template_ty);
+                let message = post_process(*output, &self.template_ty);
                 return Ok(message);
             }
             Err(e) => {
@@ -203,7 +209,7 @@ pub enum PromptTemplateType {
     IntelNeural,
 }
 
-fn create_prompt_template(template_ty: PromptTemplateType) -> ChatPrompt {
+fn create_prompt_template(template_ty: &PromptTemplateType) -> ChatPrompt {
     match template_ty {
         PromptTemplateType::Llama2Chat => {
             ChatPrompt::Llama2ChatPrompt(chat_prompts::chat::llama::Llama2ChatPrompt::default())
@@ -244,12 +250,12 @@ fn create_prompt_template(template_ty: PromptTemplateType) -> ChatPrompt {
     }
 }
 
-fn post_process(output: impl AsRef<str>, template_ty: PromptTemplateType) -> String {
-    if template_ty == PromptTemplateType::Baichuan2 {
+fn post_process(output: impl AsRef<str>, template_ty: &PromptTemplateType) -> String {
+    if *template_ty == PromptTemplateType::Baichuan2 {
         output.as_ref().split('\n').collect::<Vec<_>>()[0]
             .trim()
             .to_owned()
-    } else if template_ty == PromptTemplateType::OpenChat {
+    } else if *template_ty == PromptTemplateType::OpenChat {
         if output.as_ref().contains("<|end_of_turn|>") {
             output
                 .as_ref()
@@ -259,13 +265,13 @@ fn post_process(output: impl AsRef<str>, template_ty: PromptTemplateType) -> Str
         } else {
             output.as_ref().trim().to_owned()
         }
-    } else if template_ty == PromptTemplateType::ChatML {
+    } else if *template_ty == PromptTemplateType::ChatML {
         if output.as_ref().contains("<|im_end|>") {
             output.as_ref().replace("<|im_end|>", "").trim().to_owned()
         } else {
             output.as_ref().trim().to_owned()
         }
-    } else if template_ty == PromptTemplateType::Zephyr {
+    } else if *template_ty == PromptTemplateType::Zephyr {
         if output.as_ref().contains("</s>") {
             output.as_ref().trim_end_matches("</s>").trim().to_owned()
         } else {
