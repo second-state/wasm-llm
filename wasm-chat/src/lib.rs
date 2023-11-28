@@ -1,3 +1,5 @@
+use chat_prompts::chat::{BuildChatPrompt, ChatPrompt};
+use endpoints::chat::ChatCompletionRequest;
 use pyo3::{exceptions::PyValueError, prelude::*};
 use serde::{Deserialize, Serialize};
 use std::path::Path;
@@ -14,6 +16,7 @@ use wasmedge_sdk::{
 fn wasm_chat(_py: Python, m: &PyModule) -> PyResult<()> {
     m.add_class::<Metadata>()?;
     m.add_class::<WasmChat>()?;
+    m.add_class::<PromptTemplateType>()?;
     Ok(())
 }
 
@@ -25,12 +28,7 @@ pub struct WasmChat {
 #[pymethods]
 impl WasmChat {
     #[new]
-    pub fn new(
-        model_file: String,
-        model_alias: String,
-        wasm_file: String,
-        dir_mapping: String,
-    ) -> Result<Self, WasmChatError> {
+    pub fn new(model_file: String, wasm_file: String) -> Result<Self, WasmChatError> {
         let wasm_file = Path::new(&wasm_file);
 
         // load wasinn-pytorch-plugin from the default plugin directory: /usr/local/lib/wasmedge
@@ -38,7 +36,7 @@ impl WasmChat {
 
         // preload named model
         PluginManager::nn_preload(vec![NNPreload::new(
-            &model_alias,
+            "default",
             GraphEncoding::GGML,
             ExecutionTarget::AUTO,
             &model_file,
@@ -69,7 +67,7 @@ impl WasmChat {
             .initialize(
                 Some(vec![wasm_file.to_str().unwrap(), model_file.as_ref()]),
                 Some(vec!["ENCODING=GGML", "TARGET=AUTO"]),
-                Some(vec![dir_mapping.as_ref()]),
+                None,
             );
 
         Ok(WasmChat {
@@ -77,13 +75,9 @@ impl WasmChat {
         })
     }
 
-    pub fn init_inference_context(
-        &self,
-        model_alias: String,
-        metadata: Metadata,
-    ) -> Result<(), WasmChatError> {
+    pub fn init_inference_context(&self, metadata: Metadata) -> Result<(), WasmChatError> {
         // create and init graph instance
-        let param_alias = Param::String(&model_alias);
+        let param_alias = Param::String("default");
 
         let metadata_s = serde_json::to_string(&metadata).unwrap();
         let param_metadata = Param::String(&metadata_s);
@@ -96,7 +90,20 @@ impl WasmChat {
         Ok(())
     }
 
-    pub fn infer(&self, prompt: String) -> Result<String, WasmChatError> {
+    pub fn infer(
+        &self,
+        data: String,
+        template_ty: PromptTemplateType,
+    ) -> Result<String, WasmChatError> {
+        let mut chat_request: ChatCompletionRequest =
+            serde_json::from_str(&data).map_err(|e| WasmChatError::Operation(e.to_string()))?;
+
+        let template = create_prompt_template(template_ty.clone());
+
+        let prompt = template
+            .build(&mut chat_request.messages)
+            .map_err(|e| WasmChatError::Operation(e.to_string()))?;
+
         let param_prompt = Param::String(prompt.as_ref());
         let infer_params = vec![param_prompt];
 
@@ -106,11 +113,11 @@ impl WasmChat {
             .map_err(|e| WasmChatError::Operation(e.to_string()))?
         {
             Ok(mut res) => {
-                let message = res.pop().unwrap().downcast::<String>().unwrap();
-                return Ok(*message);
+                let output = res.pop().unwrap().downcast::<String>().unwrap();
+                let message = post_process(*output, template_ty);
+                return Ok(message);
             }
             Err(e) => {
-                println!("infer error: {:?}", e);
                 return Err(WasmChatError::Operation(format!("infer error: {e:?}")));
             }
         }
@@ -176,5 +183,95 @@ pub enum WasmChatError {
 impl From<WasmChatError> for PyErr {
     fn from(err: WasmChatError) -> PyErr {
         PyValueError::new_err(err.to_string())
+    }
+}
+
+#[pyclass]
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub enum PromptTemplateType {
+    Llama2Chat,
+    MistralInstructV01,
+    MistralLite,
+    OpenChat,
+    CodeLlama,
+    BelleLlama2Chat,
+    VicunaChat,
+    ChatML,
+    Baichuan2,
+    WizardCoder,
+    Zephyr,
+    IntelNeural,
+}
+
+fn create_prompt_template(template_ty: PromptTemplateType) -> ChatPrompt {
+    match template_ty {
+        PromptTemplateType::Llama2Chat => {
+            ChatPrompt::Llama2ChatPrompt(chat_prompts::chat::llama::Llama2ChatPrompt::default())
+        }
+        PromptTemplateType::MistralInstructV01 => ChatPrompt::MistralInstructPrompt(
+            chat_prompts::chat::mistral::MistralInstructPrompt::default(),
+        ),
+        PromptTemplateType::MistralLite => {
+            ChatPrompt::MistralLitePrompt(chat_prompts::chat::mistral::MistralLitePrompt::default())
+        }
+        PromptTemplateType::OpenChat => {
+            ChatPrompt::OpenChatPrompt(chat_prompts::chat::openchat::OpenChatPrompt::default())
+        }
+        PromptTemplateType::CodeLlama => ChatPrompt::CodeLlamaInstructPrompt(
+            chat_prompts::chat::llama::CodeLlamaInstructPrompt::default(),
+        ),
+        PromptTemplateType::BelleLlama2Chat => ChatPrompt::BelleLlama2ChatPrompt(
+            chat_prompts::chat::belle::BelleLlama2ChatPrompt::default(),
+        ),
+        PromptTemplateType::VicunaChat => {
+            ChatPrompt::VicunaChatPrompt(chat_prompts::chat::vicuna::VicunaChatPrompt::default())
+        }
+        PromptTemplateType::ChatML => {
+            ChatPrompt::ChatMLPrompt(chat_prompts::chat::chatml::ChatMLPrompt::default())
+        }
+        PromptTemplateType::Baichuan2 => ChatPrompt::Baichuan2ChatPrompt(
+            chat_prompts::chat::baichuan::Baichuan2ChatPrompt::default(),
+        ),
+        PromptTemplateType::WizardCoder => {
+            ChatPrompt::WizardCoderPrompt(chat_prompts::chat::wizard::WizardCoderPrompt::default())
+        }
+        PromptTemplateType::Zephyr => {
+            ChatPrompt::ZephyrChatPrompt(chat_prompts::chat::zephyr::ZephyrChatPrompt::default())
+        }
+        PromptTemplateType::IntelNeural => {
+            ChatPrompt::NeuralChatPrompt(chat_prompts::chat::intel::NeuralChatPrompt::default())
+        }
+    }
+}
+
+fn post_process(output: impl AsRef<str>, template_ty: PromptTemplateType) -> String {
+    if template_ty == PromptTemplateType::Baichuan2 {
+        output.as_ref().split('\n').collect::<Vec<_>>()[0]
+            .trim()
+            .to_owned()
+    } else if template_ty == PromptTemplateType::OpenChat {
+        if output.as_ref().contains("<|end_of_turn|>") {
+            output
+                .as_ref()
+                .trim_end_matches("<|end_of_turn|>")
+                .trim()
+                .to_owned()
+        } else {
+            output.as_ref().trim().to_owned()
+        }
+    } else if template_ty == PromptTemplateType::ChatML {
+        if output.as_ref().contains("<|im_end|>") {
+            output.as_ref().replace("<|im_end|>", "").trim().to_owned()
+        } else {
+            output.as_ref().trim().to_owned()
+        }
+    } else if template_ty == PromptTemplateType::Zephyr {
+        if output.as_ref().contains("</s>") {
+            output.as_ref().trim_end_matches("</s>").trim().to_owned()
+        } else {
+            output.as_ref().trim().to_owned()
+        }
+    } else {
+        output.as_ref().trim().to_owned()
     }
 }
