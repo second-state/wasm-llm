@@ -76,7 +76,6 @@ pub fn infer(prompt: String) -> String {
     let graph = &mut GRAPH.get().unwrap().lock().unwrap();
 
     let tensor_data = prompt.as_bytes().to_vec();
-    println!("Read input tensor, size in bytes: {}", tensor_data.len());
     graph
         .set_input(0, TensorType::U8, &[1], &tensor_data)
         .unwrap();
