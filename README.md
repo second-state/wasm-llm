@@ -1,9 +1,9 @@
 # WASM-LLM
 
-## Install `WasmEdge`
+## Deploy WasmEdge Runtime and `wasm-infer.wasm`
 
 ```bash
-curl -sSf https://raw.githubusercontent.com/WasmEdge/WasmEdge/master/utils/install.sh | bash -s -- --plugins wasi_nn-ggml
+curl -sSf https://raw.githubusercontent.com/second-state/wasm-llm/main/deploy.sh | bash
 ```
 
 ## Build `wasm-chat`
@@ -21,17 +21,11 @@ cd wasm-chat
 maturin build -r
 ```
 
-If you want to build `wasm-chat` for test, use the following command:
+Or, use the following command if you want to build `wasm-chat` for test:
 
 ```bash
+cd wasm-chat
 maturin develop
-```
-
-## Build `wasm-llm`
-
-```bash
-cd ../wasm-llm
-cargo build --release --target wasm32-wasi
 ```
 
 ## Download GGUF model
