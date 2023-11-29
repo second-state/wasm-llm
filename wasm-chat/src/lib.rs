@@ -39,10 +39,10 @@ impl WasmChat {
             Some(wasm_file) => wasm_file,
             None => {
                 if cfg!(target_os = "windows") {
-                    "C:\\Program Files\\WasmEdge\\wasm\\wasm-llm.wasm".to_string()
+                    "C:\\Program Files\\WasmEdge\\wasm\\wasm_infer.wasm".to_string()
                 } else if cfg!(target_os = "macos") || cfg!(target_os = "linux") {
                     format!(
-                        "{}/.wasmedge/wasm/wasm-llm.wasm",
+                        "{}/.wasmedge/wasm/wasm_infer.wasm",
                         std::env::var("HOME").unwrap()
                     )
                 } else {
