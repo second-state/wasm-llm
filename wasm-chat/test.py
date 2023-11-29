@@ -6,13 +6,13 @@ import argparse
 
 def main():
     model_file = "tinyllama-1.1b-chat-v0.3.Q5_K_M.gguf"
-    wasm_file = str(
-        Path("../wasm-infer/target/wasm32-wasi/release/wasm_infer.wasm").resolve()
-    )
 
     # init wasm environment
     print("\n[INFO] Init wasm environment ...\n")
-    wasm_chat = WasmChat(model_file, PromptTemplateType.ChatML, wasm_file)
+    wasm_chat = WasmChat(
+        model_file,
+        PromptTemplateType.ChatML,
+    )
 
     # create a default metadata
     metadata = Metadata()
