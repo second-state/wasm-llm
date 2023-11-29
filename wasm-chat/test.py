@@ -11,26 +11,26 @@ def main():
     )
 
     # init wasm environment
-    wasm_chat = WasmChat(model_file, wasm_file, PromptTemplateType.ChatML)
+    print("\n[INFO] Init wasm environment ...\n")
+    wasm_chat = WasmChat(model_file, PromptTemplateType.ChatML, wasm_file)
 
+    # create a default metadata
     metadata = Metadata()
-    print(f"log_enable: {metadata.log_enable}")
-    print(f"reverse_prompt: {metadata.reverse_prompt}")
 
     # init inference context
+    print("[INFO] Init inference context ...\n")
     wasm_chat.init_inference_context(metadata)
 
-    prompt = """<|im_start|>system
-        Answer as concisely as possible.<|im_end|>
-        <|im_start|>user
-        What is the capital of France?<|im_end|>
-        <|im_start|>assistant"""
+    prompt = "<|im_start|>system\nAnswer as concisely as possible.<|im_end|>\n<|im_start|>user\nWhat is the capital of France?<|im_end|>\n<|im_start|>assistant"
+    print(f"[INFO] Prompt:\n\n{prompt}\n\n")
 
     # run inference
+    print("[INFO] One-turn conversation ...\n")
+    print(f"  (You) What is the capital of France?\n")
     assistant_message = wasm_chat.infer(
         prompt,
     )
-    print(f"[Answer] {assistant_message}")
+    print(f"  (Bot) {assistant_message}\n")
 
 
 if __name__ == "__main__":
