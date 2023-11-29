@@ -29,12 +29,30 @@ pub struct WasmChat {
 #[pymethods]
 impl WasmChat {
     #[new]
+    #[pyo3(signature = (model_file, template_ty, wasm_file=None))]
     pub fn new(
         model_file: String,
-        wasm_file: String,
         template_ty: PromptTemplateType,
+        wasm_file: Option<String>,
     ) -> Result<Self, WasmChatError> {
-        let wasm_file = Path::new(&wasm_file);
+        let wasm_file = match wasm_file {
+            Some(wasm_file) => wasm_file,
+            None => {
+                if cfg!(target_os = "windows") {
+                    "C:\\Program Files\\WasmEdge\\wasm\\wasm-llm.wasm".to_string()
+                } else if cfg!(target_os = "macos") || cfg!(target_os = "linux") {
+                    format!(
+                        "{}/.wasmedge/wasm/wasm-llm.wasm",
+                        std::env::var("HOME").unwrap()
+                    )
+                } else {
+                    return Err(WasmChatError::Operation(
+                        "Only macOS, Linux and Windows are supported.".to_string(),
+                    ));
+                }
+            }
+        };
+        let path_wasm_file = Path::new(&wasm_file);
 
         // load wasinn-pytorch-plugin from the default plugin directory: /usr/local/lib/wasmedge
         PluginManager::load(None).map_err(|e| WasmChatError::Operation(e.to_string()))?;
@@ -54,7 +72,7 @@ impl WasmChat {
         assert!(config.wasi_enabled());
 
         // load wasm module from file
-        let module = Module::from_file(Some(&config), wasm_file)
+        let module = Module::from_file(Some(&config), path_wasm_file)
             .map_err(|e| WasmChatError::Operation(e.to_string()))?;
 
         // create a Vm
@@ -70,7 +88,7 @@ impl WasmChat {
         vm.wasi_module_mut()
             .expect("Not found wasi module")
             .initialize(
-                Some(vec![wasm_file.to_str().unwrap(), model_file.as_ref()]),
+                Some(vec![path_wasm_file.to_str().unwrap(), model_file.as_ref()]),
                 Some(vec!["ENCODING=GGML", "TARGET=AUTO"]),
                 None,
             );
