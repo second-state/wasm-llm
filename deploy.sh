@@ -84,7 +84,7 @@ else
 
     printf "[+] Downloading 'wasm-infer.wasm' ...\n\n"
 
-    wasm_url="https://github.com/second-state/wasm-llm/raw/main/wasm-infer/wasm_infer.wasm"
+    wasm_url="https://github.com/second-state/wasm-llm/releases/download/0.1.0-alpha/wasm_infer.wasm"
 
     if [[ "$OSTYPE" == "msys" ]]; then
         target_dir="C:\\Program Files\\WasmEdge\\wasm"
