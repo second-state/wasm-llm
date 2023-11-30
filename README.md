@@ -18,6 +18,11 @@ Then, build `wasm-chat` for release with the following command:
 
 ```bash
 cd wasm-chat
+
+# For linux
+maturin build -r --compatibility linux
+
+# For mac
 maturin build -r
 ```
 
