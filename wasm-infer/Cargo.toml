@@ -2,6 +2,7 @@
 name = "wasm-infer"
 version = "0.1.0"
 edition = "2021"
+authors = ["Second State Inc."]
 
 [lib]
 crate-type = ["cdylib"]
