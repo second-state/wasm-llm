@@ -12,7 +12,7 @@ import sys
 
 sys.path.append("/Volumes/Dev/secondstate/me/langchain/libs/langchain")
 
-from langchain.chat_models.wasm_chat import ChatWasm, PromptTemplateType
+from langchain.chat_models.wasm_chat import ChatWasmLocal, PromptTemplateType
 
 # from langchain import OpenAI
 from streamlit_option_menu import option_menu
@@ -64,7 +64,6 @@ with st.sidebar:
     st.subheader("", divider="grey")
     st.write("")
     model_name = st.selectbox("Pick your model", AVAILABLE_MODELS.keys(), index=0)
-    print(f"[INFO] model_name: {model_name}")
 
     if st.button("New Conversation"):
         conversations.append({"title": default_title, "messages": []})
@@ -77,7 +76,7 @@ model_file = model["model_file"]
 prompt_template = model["prompt_template"]
 
 # * todo: support `reverse_prompt`
-wasm_chat = ChatWasm(
+wasm_chat = ChatWasmLocal(
     model_file=model_file,
     prompt_template=prompt_template,
 )
