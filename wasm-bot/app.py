@@ -1,5 +1,5 @@
+from typing import Optional, List, Tuple
 import os
-
 import numpy as np
 import altair as alt
 import pandas as pd
@@ -7,14 +7,14 @@ import streamlit as st
 import datetime
 import time
 import random
-
 import sys
+import urllib.request
 
 sys.path.append("/Volumes/Dev/secondstate/me/langchain/libs/langchain")
 
 from langchain.chat_models.wasm_chat import ChatWasmLocal, PromptTemplateType
+from langchain.schema.messages import AIMessage, HumanMessage, SystemMessage
 
-# from langchain import OpenAI
 from streamlit_option_menu import option_menu
 from conversations import conversations
 
@@ -28,34 +28,57 @@ def chat_history(user, message):
         st.markdown(message)
 
 
-if "conversations" not in st.session_state:
-    st.session_state.conversations = conversations
-conversations = st.session_state.conversations
+def get_model_file(model_name):
+    model_file = AVAILABLE_MODELS[model_name]["model_file"]
+    model_path = os.path.join("models", model_file)
 
-#  当前选择的对话
-if "index" not in st.session_state:
-    st.session_state.index = 0
+    if not os.path.exists(model_path):
+        model_url = AVAILABLE_MODELS[model_name]["url"]
+        progress_text = "Operation in progress. Please wait."
+        my_bar = st.progress(0, text=progress_text)
+
+        def download_progress(count, block_size, total_size):
+            percent_complete = count * block_size / total_size
+            my_bar.progress(percent_complete, text=progress_text)
+
+        urllib.request.urlretrieve(model_url, model_path, reporthook=download_progress)
+
+    return model_path
+
+
+# if "conversation" not in st.session_state:
+#     st.session_state.conversation = {}
+# conversation = st.session_state.conversation
+
+if "messages" not in st.session_state:
+    st.session_state.messages = []
+
+# if "index" not in st.session_state:
+#     st.session_state.index = 0
+
+if "start_chat" not in st.session_state:
+    st.session_state.start_chat = False
 
 AVAILABLE_MODELS = {
     "TinyLlama-1.1B-Chat": {
-        "model_file": "/Volumes/Store/models/gguf/tinyllama-1.1b-chat-v0.3.Q5_K_M.gguf",
+        "model_file": "tinyllama-1.1b-chat-v0.3.Q5_K_M.gguf",
         "prompt_template": PromptTemplateType.ChatML,
+        "url": "https://huggingface.co/second-state/TinyLlama-1.1B-Chat-v0.3-GGUF/resolve/main/tinyllama-1.1b-chat-v0.3.Q5_K_M.gguf",
     },
     "MistralLite-7B": {
-        "model_file": "/Volumes/Store/models/gguf/mistrallite.Q5_K_M.gguf",
+        "model_file": "mistrallite.Q5_K_M.gguf",
         "prompt_template": PromptTemplateType.MistralLite,
+        "url": "https://huggingface.co/second-state/MistralLite-7B-GGUF/resolve/main/mistrallite.Q5_K_M.gguf",
     },
     "Llama-2-13B-Chat": {
-        "model_file": "/Volumes/Store/models/gguf/llama-2-13b-chat.Q5_K_M.gguf",
+        "model_file": "llama-2-13b-chat.Q5_K_M.gguf",
         "prompt_template": PromptTemplateType.Llama2Chat,
+        "url": "https://huggingface.co/second-state/Llama-2-13B-Chat-GGUF/resolve/main/llama-2-13b-chat.Q5_K_M.gguf",
     },
     "CodeLlama-13B-Instruct": {
-        "model_file": "/Volumes/Store/models/gguf/codellama-13b-instruct.Q4_0.gguf",
+        "model_file": "codellama-13b-instruct.Q4_0.gguf",
         "prompt_template": PromptTemplateType.CodeLlama,
-    },
-    "CodeLlama-13B-Instruct": {
-        "model_file": "/Volumes/Store/models/gguf/deepseek-llm-7b-chat.Q5_K_M.gguf",
-        "prompt_template": PromptTemplateType.CodeLlama,
+        "url": "https://huggingface.co/second-state/CodeLlama-13B-Instruct-GGUF/resolve/main/codellama-13b-instruct.Q4_0.gguf",
     },
 }
 
@@ -66,34 +89,45 @@ with st.sidebar:
     model_name = st.selectbox("Pick your model", AVAILABLE_MODELS.keys(), index=0)
 
     if st.button("New Conversation"):
-        conversations.append({"title": default_title, "messages": []})
-        st.session_state.index = len(conversations) - 1
+        model_file = get_model_file(model_name)
+        prompt_template = AVAILABLE_MODELS[model_name]["prompt_template"]
 
-if model_name is None:
-    model_name = "TinyLlama-1.1B-Chat"
-model = AVAILABLE_MODELS[model_name]
-model_file = model["model_file"]
-prompt_template = model["prompt_template"]
+        # * todo: support `reverse_prompt`
+        if "wasm_chat" not in st.session_state:
+            print("*** init wasm_chat")
+            st.session_state.wasm_chat = ChatWasmLocal(
+                model_file=model_file,
+                prompt_template=prompt_template,
+            )
+            print("*** init done")
 
-# * todo: support `reverse_prompt`
-wasm_chat = ChatWasmLocal(
-    model_file=model_file,
-    prompt_template=prompt_template,
-)
+        st.session_state.start_chat = True
 
-st.session_state.messages = conversations[st.session_state.index]["messages"]
+if st.session_state.start_chat:
+    chat_history("assistant", "Hello! How can I help you?")
+    for message in st.session_state.messages:
+        if isinstance(message, AIMessage):
+            chat_history("assistant", message.content)
+        elif isinstance(message, HumanMessage):
+            chat_history("user", message.content)
+        elif isinstance(message, SystemMessage):
+            chat_history("system", message.content)
+        else:
+            raise ValueError(f"Unknown message type: {type(message)}")
 
-prompt = st.chat_input("Input your question")
+    prompt = st.chat_input("Input your question")
+    print(f"[DEBUG] prompt: {prompt}")
 
-if prompt:
-    if conversations[st.session_state.index]["title"] == default_title:
-        conversations[st.session_state.index]["title"] = prompt[:12]
-    for user, message in st.session_state.messages:
-        chat_history(user, message)
+    if prompt:
+        chat_history("user", prompt)
 
-    chat_history("user", prompt)
-    answer = wasm_chat.predict(prompt)
+        user_message = HumanMessage(content=prompt)
+        st.session_state.messages.append(user_message)
 
-    st.session_state.messages.append(("user", prompt))
-    st.session_state.messages.append(("assistant", answer))
-    chat_history("assistant", answer)
+        ai_message = st.session_state.wasm_chat(st.session_state.messages)
+        st.session_state.messages.append(ai_message)
+
+        print(f"[DEBUG] ai_message: {ai_message}")
+
+        answer = ai_message.content
+        chat_history("assistant", answer)
