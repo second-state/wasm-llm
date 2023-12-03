@@ -26,12 +26,7 @@ maturin build -r --compatibility linux
 maturin build -r
 ```
 
-Or, use the following command if you want to build `wasm-chat` for test:
-
-```bash
-cd wasm-chat
-maturin develop
-```
+If the command is executed successfully, you will get a `wasm_chat` wheel file in the `target/wheels` directory. Use `pip install <wheel file>` to install it.
 
 ## Download GGUF model
 
