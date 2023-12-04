@@ -1,12 +1,5 @@
-from typing import Optional, List, Tuple
 import os
-import numpy as np
-import altair as alt
-import pandas as pd
 import streamlit as st
-import datetime
-import time
-import random
 import sys
 import urllib.request
 
@@ -15,8 +8,6 @@ sys.path.append("/home/ubuntu/workspace/langchain/libs/langchain")
 from langchain.chat_models.wasm_chat import ChatWasmLocal, PromptTemplateType
 from langchain.schema.messages import AIMessage, HumanMessage, SystemMessage
 
-# from streamlit_option_menu import option_menu
-# from conversations import conversations
 
 st.set_page_config(layout="wide", page_title="Wasm Chat")
 
