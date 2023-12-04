@@ -44,3 +44,33 @@ cd wasm-chat
 
 python test.py
 ```
+
+## Chat with `wasm-bot`
+
+- Install dependencies
+
+  `wasm-bot` is a GUI based chat bot. To use it, install the following   dependencies:
+
+  ```bash
+  cd wasm-bot
+
+  pip install -r requirements.txt
+  ```
+
+  **Notice that `wasm-bot` depends on LangChain with the `wasm-chat` integration.** This version of LangChain is not merged into the main branch yet. You can git clone the specific branch and import it into `wasm-bot` by path.
+
+  ```bash
+  git clone -b feat-integrate-wasm-chat --single-branch https://github.com/  apepkuss/langchain.git
+  ```
+
+- Run `wasm-bot`
+
+  ```bash
+  cd wasm-bot
+
+  # use default port 8501
+  streamlit run app.py
+
+  # use custom port, for example, 8080
+  streamlit run app.py --server.port 8080
+  ```
