@@ -1,1 +1,5 @@
 wasm-infer/target
+*.gguf
+wasm-bot/__pycache__/
+wasm-rag/__pycache__/
+wasm-chat/target
