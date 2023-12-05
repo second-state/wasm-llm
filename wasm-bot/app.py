@@ -2,6 +2,7 @@ import os
 import streamlit as st
 import sys
 import urllib.request
+import time
 
 sys.path.append("/home/ubuntu/workspace/langchain/libs/langchain")
 
@@ -133,12 +134,20 @@ if st.session_state.start_chat:
         user_message = HumanMessage(content=prompt)
         st.session_state.messages.append(user_message)
 
-        with st.spinner("Thinking..."):
+        with st.chat_message("assistant"):
+            message_placeholder = st.empty()
+            full_response = ""
+
             # invoke wasm_chat
             ai_message = st.session_state.wasm_chat(st.session_state.messages)
 
-            # Display assistant response in chat message container
-            write_message("assistant", ai_message.content)
+            # Simulate stream of response with milliseconds delay
+            for chunk in ai_message.content.split():
+                full_response += chunk + " "
+                time.sleep(0.05)
+                # Add a blinking cursor to simulate typing
+                message_placeholder.markdown(full_response + "▌")
+            message_placeholder.markdown(full_response)
 
             # Add assistant response to chat history
             st.session_state.messages.append(ai_message)
