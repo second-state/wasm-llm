@@ -135,8 +135,6 @@ if st.session_state.start_chat:
         st.session_state.messages.append(user_message)
 
         with st.chat_message("assistant"):
-            message_placeholder = st.empty()
-
             # invoke wasm_chat
             ai_message = st.session_state.wasm_chat(st.session_state.messages)
 
