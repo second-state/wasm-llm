@@ -12,8 +12,6 @@ from langchain.schema.messages import AIMessage, HumanMessage, SystemMessage
 
 st.set_page_config(layout="wide", page_title="Wasm Chat")
 
-default_title = "New Conversation"
-
 
 def write_message(user, message):
     with st.chat_message(user):
@@ -112,7 +110,9 @@ with st.sidebar:
         st.session_state.start_chat = True
 
 if st.session_state.start_chat:
-    st.title(default_title)
+    st.title("💬 Wasmbot")
+    st.caption("🚀 A chatbot powered by WasmEdge Runtime")
+
     write_message("assistant", "Hello 👋, how can I help you?")
     # display chat history
     if len(st.session_state.messages) > 0:
@@ -136,18 +136,11 @@ if st.session_state.start_chat:
 
         with st.chat_message("assistant"):
             message_placeholder = st.empty()
-            full_response = ""
 
             # invoke wasm_chat
             ai_message = st.session_state.wasm_chat(st.session_state.messages)
 
-            # Simulate stream of response with milliseconds delay
-            for chunk in ai_message.content.split():
-                full_response += chunk + " "
-                time.sleep(0.05)
-                # Add a blinking cursor to simulate typing
-                message_placeholder.markdown(full_response + "▌")
-            message_placeholder.markdown(full_response)
+            st.markdown(ai_message.content)
 
             # Add assistant response to chat history
             st.session_state.messages.append(ai_message)
