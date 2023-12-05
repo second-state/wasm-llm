@@ -75,7 +75,6 @@ with st.sidebar:
     st.subheader("", divider="grey")
     st.write("")
     model_name = st.selectbox("Pick your model", AVAILABLE_MODELS.keys(), index=0)
-    print(f"[INFO] model_name: {model_name}")
 
     if st.button("New Conversation"):
         model_file = get_model_file(model_name)
