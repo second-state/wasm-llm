@@ -75,12 +75,27 @@ with st.sidebar:
     st.subheader("", divider="grey")
     st.write("")
     model_name = st.selectbox("Pick your model", AVAILABLE_MODELS.keys(), index=0)
+    print(f"[INFO] model_name: {model_name}")
 
     if st.button("New Conversation"):
         model_file = get_model_file(model_name)
         prompt_template = AVAILABLE_MODELS[model_name]["prompt_template"]
 
-        if "wasm_chat" not in st.session_state:
+        if (
+            "model_name" not in st.session_state
+            or st.session_state.model_name != model_name
+        ):
+            # clear chat history if the model is changed
+            if (
+                "model_name" in st.session_state
+                and st.session_state.model_name != model_name
+                and len(st.session_state.messages) > 0
+            ):
+                st.session_state.messages = []
+
+            st.session_state.model_name = model_name
+
+            # create ChatWasmLocal instance
             if "reverse_prompt" in AVAILABLE_MODELS[model_name]:
                 reverse_prompt = AVAILABLE_MODELS[model_name]["reverse_prompt"]
                 st.session_state.wasm_chat = ChatWasmLocal(
@@ -99,18 +114,17 @@ with st.sidebar:
 if st.session_state.start_chat:
     st.title(default_title)
     write_message("assistant", "Hello 👋, how can I help you?")
-    for message in st.session_state.messages:
-        if isinstance(message, AIMessage):
-            write_message("assistant", message.content)
-        elif isinstance(message, HumanMessage):
-            write_message("user", message.content)
-        elif isinstance(message, SystemMessage):
-            write_message("system", message.content)
-        else:
-            raise ValueError(f"Unknown message type: {type(message)}")
-
-    # prompt = st.chat_input("Input your question")
-    # print(f"[DEBUG] prompt: {prompt}")
+    # display chat history
+    if len(st.session_state.messages) > 0:
+        for message in st.session_state.messages:
+            if isinstance(message, AIMessage):
+                write_message("assistant", message.content)
+            elif isinstance(message, HumanMessage):
+                write_message("user", message.content)
+            elif isinstance(message, SystemMessage):
+                write_message("system", message.content)
+            else:
+                raise ValueError(f"Unknown message type: {type(message)}")
 
     if prompt := st.chat_input("Input your question"):
         # Display user message in chat message container
@@ -120,11 +134,12 @@ if st.session_state.start_chat:
         user_message = HumanMessage(content=prompt)
         st.session_state.messages.append(user_message)
 
-        # invoke wasm_chat
-        ai_message = st.session_state.wasm_chat(st.session_state.messages)
+        with st.spinner("Thinking..."):
+            # invoke wasm_chat
+            ai_message = st.session_state.wasm_chat(st.session_state.messages)
 
-        # Display assistant response in chat message container
-        write_message("assistant", ai_message.content)
+            # Display assistant response in chat message container
+            write_message("assistant", ai_message.content)
 
-        # Add assistant response to chat history
-        st.session_state.messages.append(ai_message)
+            # Add assistant response to chat history
+            st.session_state.messages.append(ai_message)
