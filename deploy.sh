@@ -70,13 +70,18 @@ else
     VERSION=0.13.5
     if curl -sSf https://raw.githubusercontent.com/WasmEdge/WasmEdge/master/utils/install.sh | bash -s -- -v $VERSION --plugins wasi_nn-ggml; then
         source $HOME/.wasmedge/env
-        wasmedge_version=$(wasmedge --version | awk '{print $3}')
-        wasmedge_path=$(which wasmedge)
-        printf "\n    The WasmEdge Runtime %s is installed in %s.\n\n" "$wasmedge_version" "$wasmedge_path"
+
     else
         echo "Failed to install WasmEdge"
         exit 1
     fi
+
+    if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+        ldconfig
+    fi
+
+    wasmedge_path=$(which wasmedge)
+    printf "\nThe WasmEdge Runtime %s is installed in %s.\n\n" "$VERSION" "$wasmedge_path"
 
     printf "\n"
 
