@@ -5,3 +5,4 @@ wasm-rag/__pycache__/
 wasm-rag/db/
 wasm-rag/source_documents
 wasm-chat/target
+wasm-chat/tests/__pycache__/
