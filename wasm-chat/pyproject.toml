@@ -4,13 +4,28 @@ build-backend = "maturin"
 
 [project]
 name = "wasm-chat"
-requires-python = ">=3.8"
+version = "0.1.0"
+description = "some description"
+readme = "README.md"
+authors = [
+    { name = "Sam Liu", email = "xin.sam.liu@hotmail.com" },
+    { name = "Second State Inc." },
+]
 classifiers = [
     "Programming Language :: Rust",
     "Programming Language :: Python :: Implementation :: CPython",
     "Programming Language :: Python :: Implementation :: PyPy",
+    "Programming Language :: Python :: 3",
+    "Environment :: WebAssembly",
+    "Environment :: WebAssembly :: WASI",
 ]
+keywords = ["webassembly", "LLM"]
 dynamic = ["version"]
+requires-python = ">=3.8"
+license = "Apache-2.0"
 
 [tool.maturin]
 features = ["pyo3/extension-module"]
+
+[project.urls]
+Homepage = "https://github.com/second-state/wasm-llm"
