@@ -9,57 +9,135 @@ on:
   push:
     paths-ignore:
       - "**/*.md"
-    # branches:
-    #   - main
-    #   - master
-    # tags:
-    #   - '*'
   pull_request:
-  # workflow_dispatch:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 env:
-  PACKAGE_NAME: wasm-chat
+  PACKAGE_NAME: wasm_chat
   PYTHON_VERSION: "3.10"
+  MATURIN_VERSION: "1.4.0"
+
 
 jobs:
   linux:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
+    container:
+      image: wasmedge/wasmedge:ubuntu-build-clang
     strategy:
       matrix:
-        target: [x86_64, aarch64, armv7]
+        target: [x86_64-unknown-linux-gnu] # aarch64-unknown-linux-gnu
+        rust: [1.73]
+        python_version: [3.11, "3.10", 3.9, 3.8]
     steps:
       - name: Checkout wasm-llm
         uses: actions/checkout@v3
         with:
           fetch-depth: 0
 
-      - name: Deploy WasmEdge and wasm-infer.wasm
+      - name: Set up build environment
+        run: |
+          apt-get update
+          apt-get install -y software-properties-common libboost-all-dev ninja-build
+          apt-get install -y llvm-15-dev liblld-15-dev
+          apt-get install -y tree libopenblas-dev gcc-multilib
+
+      - name: Install Rust-stable
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: ${{ matrix.rust }}
+          targets: ${{ matrix.target}}
+
+      - name: Setup environment
         run: |
           bash deploy.sh
+          echo "$HOME/.wasmedge/bin" >> $GITHUB_PATH
 
-      - uses: actions/setup-python@v4
+      - name: Check WasmEdge Version
+        run: |
+          wasmedge --version
+          which wasmedge
+
+      - name: Setup Conda dependencies
+        uses: conda-incubator/setup-miniconda@v2
         with:
-          python-version: ${{ env.PYTHON_VERSION }}
-          architecture: x64
+          # Specify python version your environment will have. Remember to quote this, or
+          # YAML will think you want python 3.1 not 3.10
+          python-version: ${{ matrix.python_version }} # "3.10"
+          # This uses *miniforge*, rather than *minicond*. The primary difference is that
+          # the defaults channel is not enabled at all
+          miniforge-version: latest
+          # These properties enable the use of mamba, which is much faster and far less error
+          # prone than conda while being completely compatible with the conda CLI
+          use-mamba: true
+          mamba-version: "*"
+
+      - name: Pip install maturin and maturin[patchelf]
+        # The `-l` is needed so conda environment activation works correctly
+        shell: bash -l {0}
+        run: |
+          which python
+          pip install maturin==${{ env.MATURIN_VERSION }}
+          pip install maturin[patchelf]
+          pip list installed
 
       - name: Build wheels
-        uses: PyO3/maturin-action@v1
-        with:
-          target: ${{ matrix.target }}
-          args: --release --out dist --find-interpreter
-          sccache: 'true'
-          manylinux: auto
-          working-directory: 'wasm-chat'
-
-      - name: Install built wheel
-        if: matrix.target == 'x86_64'
-        working-directory: 'wasm-chat'
+        working-directory: wasm-chat
+        shell: bash -l {0}
         run: |
-          pip install dist/${{ env.PACKAGE_NAME }}-*.whl --force-reinstall
+          # maturin build --release --out dist --compatibility linux --find-interpreter --target ${{ matrix.target }}
+          maturin build --compatibility linux -f -r -o dist --target ${{ matrix.target }}
+
+      - name: check artifacts
+        working-directory: 'wasm-chat'
+        shell: bash -l {0}
+        run: |
+          ls -al dist
+
+      - name: Test wheel-310
+        if: ${{ (matrix.target == 'x86_64-unknown-linux-gnu') && (matrix.python_version == '3.10') }}
+        working-directory: 'wasm-chat'
+        env:
+          LD_LIBRARY_PATH: /github/home/.wasmedge/lib
+        shell: bash -l {0}
+        run: |
+          pip install dist/${{ env.PACKAGE_NAME }}-0.1.0-cp310-cp310-linux_x86_64.whl --force-reinstall
+          pip install pytest
+          pytest -v
+
+      - name: Test wheel-311
+        if: ${{ (matrix.target == 'x86_64-unknown-linux-gnu') && (matrix.python_version == '3.11') }}
+        working-directory: 'wasm-chat'
+        env:
+          LD_LIBRARY_PATH: /github/home/.wasmedge/lib
+        shell: bash -l {0}
+        run: |
+          pip install dist/${{ env.PACKAGE_NAME }}-0.1.0-cp311-cp311-linux_x86_64.whl --force-reinstall
+          pip install pytest
+          pytest -v
+
+      - name: Test wheel-39
+        if: ${{ (matrix.target == 'x86_64-unknown-linux-gnu') && (matrix.python_version == '3.9') }}
+        working-directory: 'wasm-chat'
+        env:
+          LD_LIBRARY_PATH: /github/home/.wasmedge/lib
+        shell: bash -l {0}
+        run: |
+          pip install dist/${{ env.PACKAGE_NAME }}-0.1.0-cp39-cp39-linux_x86_64.whl --force-reinstall
+          pip install pytest
+          pytest -v
+
+      - name: Test wheel-38
+        if: ${{ (matrix.target == 'x86_64-unknown-linux-gnu') && (matrix.python_version == '3.8') }}
+        working-directory: 'wasm-chat'
+        env:
+          LD_LIBRARY_PATH: /github/home/.wasmedge/lib
+        shell: bash -l {0}
+        run: |
+          ls -l dist
+          pip install dist/${{ env.PACKAGE_NAME }}-0.1.0-cp38-cp38-linux_x86_64.whl --force-reinstall
           pip install pytest
           pytest -v
 
@@ -67,7 +145,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: wheels
-          path: dist
+          path: ${{ github.workspace }}/wasm-chat/dist
 
   # windows:
   #   runs-on: windows-latest
@@ -98,10 +176,16 @@ jobs:
   #     matrix:
   #       target: [x86_64, aarch64]
   #   steps:
-  #     - uses: actions/checkout@v3
+  #     - name: Checkout wasm-llm
+  #       uses: actions/checkout@v3
+  #       with:
+  #         fetch-depth: 0
+
   #     - uses: actions/setup-python@v4
   #       with:
-  #         python-version: '3.10'
+  #         python-version: ${{ env.PYTHON_VERSION }}
+  #         architecture: x64
+
   #     - name: Build wheels
   #       uses: PyO3/maturin-action@v1
   #       with:
