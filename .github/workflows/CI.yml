@@ -107,7 +107,7 @@ jobs:
           LD_LIBRARY_PATH: /github/home/.wasmedge/lib
         shell: bash -l {0}
         run: |
-          pip install dist/${{ env.PACKAGE_NAME }}-0.1.0-cp310-cp310-linux_x86_64.whl --force-reinstall
+          pip install dist/${{ env.PACKAGE_NAME }}-0.1.0-cp310-cp310-*_x86_64.whl --force-reinstall
           pip install pytest
           pytest -v
 
@@ -118,7 +118,7 @@ jobs:
           LD_LIBRARY_PATH: /github/home/.wasmedge/lib
         shell: bash -l {0}
         run: |
-          pip install dist/${{ env.PACKAGE_NAME }}-0.1.0-cp311-cp311-linux_x86_64.whl --force-reinstall
+          pip install dist/${{ env.PACKAGE_NAME }}-0.1.0-cp311-cp311-*_x86_64.whl --force-reinstall
           pip install pytest
           pytest -v
 
@@ -129,7 +129,7 @@ jobs:
           LD_LIBRARY_PATH: /github/home/.wasmedge/lib
         shell: bash -l {0}
         run: |
-          pip install dist/${{ env.PACKAGE_NAME }}-0.1.0-cp39-cp39-linux_x86_64.whl --force-reinstall
+          pip install dist/${{ env.PACKAGE_NAME }}-0.1.0-cp39-cp39-*_x86_64.whl --force-reinstall
           pip install pytest
           pytest -v
 
@@ -141,7 +141,7 @@ jobs:
         shell: bash -l {0}
         run: |
           ls -l dist
-          pip install dist/${{ env.PACKAGE_NAME }}-0.1.0-cp38-cp38-linux_x86_64.whl --force-reinstall
+          pip install dist/${{ env.PACKAGE_NAME }}-0.1.0-cp38-cp38-*_x86_64.whl --force-reinstall
           pip install pytest
           pytest -v
 
