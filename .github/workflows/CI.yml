@@ -9,8 +9,8 @@ on:
   push:
     paths-ignore:
       - "**/*.md"
-    # tags:
-    #   - '*'
+    tags:
+      - 'chat/*'
   pull_request:
   workflow_dispatch:
 
@@ -23,7 +23,6 @@ env:
   PACKAGE_NAME: wasm_chat
   PYTHON_VERSION: "3.10"
   MATURIN_VERSION: "1.4.0"
-
 
 jobs:
   linux:
