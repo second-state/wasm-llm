@@ -9,8 +9,10 @@ on:
   push:
     paths-ignore:
       - "**/*.md"
+    branches:
+      "**"
     tags:
-      - 'chat/*'
+      - 'chat/**'
   pull_request:
   workflow_dispatch:
 
