@@ -92,8 +92,7 @@ jobs:
         working-directory: wasm-chat
         shell: bash -l {0}
         run: |
-          # maturin build --release --out dist --compatibility linux --find-interpreter --target ${{ matrix.target }}
-          maturin build --compatibility linux -f -r -o dist --target ${{ matrix.target }}
+          maturin build -f -r -o dist --target ${{ matrix.target }}
 
       - name: check artifacts
         working-directory: 'wasm-chat'
