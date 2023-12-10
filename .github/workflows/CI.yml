@@ -20,7 +20,6 @@ env:
   PYTHON_VERSION: "3.10"
   MATURIN_VERSION: "1.4.0"
 
-
 jobs:
   linux:
     runs-on: ubuntu-22.04
@@ -140,6 +139,58 @@ jobs:
           pip install dist/${{ env.PACKAGE_NAME }}-0.1.0-cp38-cp38-linux_x86_64.whl --force-reinstall
           pip install pytest
           pytest -v
+
+      - name: Upload wheels
+        uses: actions/upload-artifact@v3
+        with:
+          name: wheels
+          path: ${{ github.workspace }}/wasm-chat/dist
+
+  macos:
+    runs-on: macos-latest
+    strategy:
+      matrix:
+        target: [x86_64-apple-darwin, aarch64-apple-darwin]
+        rust: [1.73]
+        python_version: ["3.10"]
+    steps:
+      - name: Checkout wasm-llm
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Install build tools
+        run: brew install llvm ninja boost cmake
+
+      - name: Install Rust-stable
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: ${{ matrix.rust }}
+          targets: ${{ matrix.target}}
+
+      - name: Setup environment
+        run: |
+          bash deploy.sh
+          echo "$HOME/.wasmedge/bin" >> $GITHUB_PATH
+
+      - name: Check WasmEdge Version
+        run: |
+          wasmedge --version
+          which wasmedge
+
+      - name: Build wheels
+        uses: PyO3/maturin-action@v1
+        with:
+          target: ${{ matrix.target }}
+          args: --release --out dist --find-interpreter
+          sccache: 'true'
+          working-directory: wasm-chat
+
+      - name: check artifacts
+        working-directory: 'wasm-chat'
+        shell: bash -l {0}
+        run: |
+          ls -al dist
 
       - name: Upload wheels
         uses: actions/upload-artifact@v3
