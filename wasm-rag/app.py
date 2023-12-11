@@ -1,22 +1,25 @@
 import os
-import streamlit as st
 import sys
-import urllib.request
-import time
 import tempfile
+import time
+import urllib.request
 from io import BytesIO
+
+import streamlit as st
 
 sys.path.append("/home/ubuntu/workspace/langchain/libs/langchain")
 
+from knowledgebase import DOCUMENT_SOURCE_DIRECTORY, MyKnowledgeBase
+from langchain.chains import RetrievalQA
 from langchain.chat_models.wasm_chat import ChatWasmLocal, PromptTemplateType
-from langchain.schema.messages import AIMessage, HumanMessage, SystemMessage
 from langchain.document_loaders import (
     DirectoryLoader,
-    UnstructuredFileLoader,
     PyPDFLoader,
+    UnstructuredFileLoader,
 )
+from langchain.embeddings import GPT4AllEmbeddings
+from langchain.schema.messages import AIMessage, HumanMessage, SystemMessage
 from langchain.text_splitter import RecursiveCharacterTextSplitter
-
 
 st.set_page_config(layout="wide", page_title="Wasm Chat")
 
@@ -75,6 +78,11 @@ AVAILABLE_MODELS = {
         "url": "https://huggingface.co/second-state/Baichuan2-13B-Chat-GGUF/resolve/main/Baichuan2-13B-Chat-ggml-model-q4_0.gguf",
         "reverse_prompt": "用户:",
     },
+    "Orca-2-13B": {
+        "model_file": "Orca-2-13b-ggml-model-q4_0.gguf",
+        "prompt_template": PromptTemplateType.ChatML,
+        "url": "https://huggingface.co/second-state/Orca-2-13B-GGUF/resolve/main/Orca-2-13b-ggml-model-q4_0.gguf",
+    },
 }
 
 with st.sidebar:
@@ -117,38 +125,66 @@ with st.sidebar:
 
         st.session_state.start_chat = True
 
-    dir_docs = st.text_input("Directory of documents", "./source_documents")
-    if st.button("Load Documents"):
-        print("[INFO] Creating knowledgebase ...")
 
 if st.session_state.start_chat:
-    st.title("💬 Wasmbot")
-    st.caption("🚀 A chatbot powered by WasmEdge Runtime")
+    st.title("💬 WasmRAG")
+    st.caption("🚀 A RAG app powered by WasmEdge Runtime")
 
-    uploaded_file = st.file_uploader(
-        "Upload a document",
-        type=("txt", "md", "pdf"),
-    )
-    if uploaded_file:
-        print(f"uploaded_file name: {uploaded_file.name}")
-        prefix, suffix = uploaded_file.name.split(".")
-        print(f"prefix: {prefix}, suffix: {suffix}")
-        bytes = uploaded_file.read()
-        pdf_stream = BytesIO(bytes)
+    if "uploaded_files" not in st.session_state:
+        st.session_state.uploaded_files = []
 
-        temp = tempfile.NamedTemporaryFile(prefix=prefix + "-", suffix="." + suffix)
-        print(f"temp.name: {temp.name}")
-        temp.write(bytes)
-        print("Created file is:", temp)
-        print("Name of the file is:", temp.name)
+    with st.spinner("Loading documents..."):
+        uploaded_files = st.file_uploader(
+            "Upload your documents",
+            type=("txt", "md", "pdf"),
+            accept_multiple_files=True,
+        )
+        if uploaded_files and len(uploaded_files) > 0:
+            num_files = len(st.session_state.uploaded_files)
+            for f in uploaded_files:
+                file_path = os.path.join(DOCUMENT_SOURCE_DIRECTORY, f.name)
+                if file_path not in st.session_state.uploaded_files:
+                    print(f"[INFO] Saving {f.name}")
+                    st.session_state.uploaded_files.append(file_path)
+                    with open(
+                        os.path.join(DOCUMENT_SOURCE_DIRECTORY, f.name), "wb"
+                    ) as out_file:
+                        out_file.write(f.read())
 
-        loader = UnstructuredFileLoader(temp.name)
-        docs = loader.load()
-        # print(docs)
+            if num_files != len(st.session_state.uploaded_files):
+                print("[INFO] Creating knowledgebase ...")
+                kb = MyKnowledgeBase(pdf_source_folder_path=DOCUMENT_SOURCE_DIRECTORY)
+                if "kb" not in st.session_state:
+                    st.session_state.kb = kb
 
-        temp.close()
+                print("[INFO] Creating embedder ...")
+                embedder = GPT4AllEmbeddings()
+                if "embedder" not in st.session_state:
+                    st.session_state.embedder = embedder
+
+                print("[INFO] Initiating document injection pipeline ...")
+                st.session_state.kb.initiate_document_injection_pipeline(
+                    st.session_state.embedder
+                )
+
+                retriever = st.session_state.kb.retriever_from_persistant_vector_db(
+                    st.session_state.embedder
+                )
+                if "retriever" not in st.session_state:
+                    st.session_state.retriever = retriever
+
+                print("[INFO] Initializing qa ...")
+                qa = RetrievalQA.from_chain_type(
+                    llm=st.session_state.wasm_chat,
+                    chain_type="stuff",
+                    retriever=st.session_state.retriever,
+                    return_source_documents=True,
+                    verbose=True,
+                )
+                st.session_state.qa = qa
 
     write_message("assistant", "Hello 👋, how can I help you?")
+
     # display chat history
     if len(st.session_state.messages) > 0:
         for message in st.session_state.messages:
@@ -170,10 +206,17 @@ if st.session_state.start_chat:
         st.session_state.messages.append(user_message)
 
         with st.chat_message("assistant"):
-            # invoke wasm_chat
-            ai_message = st.session_state.wasm_chat(st.session_state.messages)
-
-            st.markdown(ai_message.content)
+            # query
+            result = st.session_state.qa(prompt)
+            ai_message, docs = result["result"], result["source_documents"]
+            st.markdown(ai_message)
 
             # Add assistant response to chat history
-            st.session_state.messages.append(ai_message)
+            st.session_state.messages.append(AIMessage(content=ai_message))
+
+            print(f"\n[Answer]\n\n{ai_message}")
+            print("\n\n", "#" * 30, "Sources", "#" * 30)
+            for document in docs:
+                print("\n[SOURCE] " + document.metadata["source"] + ":\n")
+                print(document.page_content)
+            print("\n", "#" * 30, "Sources", "#" * 30)

@@ -1,8 +1,8 @@
 import os
-from langchain.vectorstores import Chroma
+
 from langchain.document_loaders import DirectoryLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
-
+from langchain.vectorstores import Chroma
 
 CHROMA_DB_DIRECTORY = "db"
 DOCUMENT_SOURCE_DIRECTORY = "source_documents"
