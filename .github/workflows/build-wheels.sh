@@ -18,8 +18,11 @@ export PATH="$HOME/.cargo/bin:$PATH"
 #     # "${PYBIN}/pip" wheel /io/ -w /io/dist/ --no-deps
 # done
 
+current_dir=$(pwd)
+echo "Current directory: $current_dir"
+
 export PYTHON_EXECUTABLE=/opt/python/cp310-cp310/bin/python
-bash ../../deploy.sh
+bash ../deploy.sh
 /opt/python/cp310-cp310/bin/pip install -U maturin==1.4.0 maturin[patchelf]
 /opt/python/cp310-cp310/bin/maturin build -i /opt/python/cp310-cp310/bin/python -r -o dist
 
