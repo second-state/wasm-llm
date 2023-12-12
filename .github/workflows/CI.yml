@@ -29,7 +29,8 @@ env:
 jobs:
   linux-wheels:
     runs-on: ubuntu-latest
-    container: quay.io/pypa/manylinux2014_x86_64
+    # container: quay.io/pypa/manylinux2014_x86_64
+    container: wasmedge/wasmedge:manylinux2014_x86_64
     strategy:
       matrix:
         target: [x86_64-unknown-linux-gnu] # aarch64-unknown-linux-gnu
@@ -41,11 +42,11 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name:
-        run: |
-          yum install -y clang-devel
-          yum install epel-release
-          yum install -y clang
+      # - name:
+      #   run: |
+      #     yum install -y clang-devel
+      #     yum install epel-release
+      #     yum install -y clang
 
       - name: Setup environment
         run: |
