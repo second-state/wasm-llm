@@ -16,6 +16,8 @@ for PYBIN in /opt/python/cp{38,39,310,311,312}*/bin; do
     # "${PYBIN}/pip" wheel /io/ -w /io/dist/ --no-deps
 done
 
+ls -al dist/
+
 # # Bundle external shared libraries into the wheels
 # for whl in dist/*{cp36,cp37,cp38,cp39,cp310}*.whl; do
 #     auditwheel repair "$whl" -w /io/dist/
