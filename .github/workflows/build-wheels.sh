@@ -25,8 +25,8 @@ done
 
 ls -al dist/
 
-PYBIN=(/opt/python/cp38*/bin, /opt/python/cp39*/bin)
-WHL=(wasm_chat-*cp38-cp38*.whl, wasm_chat-*cp39-cp39*.whl)
+PYBIN=(/opt/python/cp38*/bin /opt/python/cp39*/bin)
+WHL=(wasm_chat-*cp38-cp38*.whl wasm_chat-*cp39-cp39*.whl)
 # Get the length of the arrays
 length=${#PYBIN[@]}
 
