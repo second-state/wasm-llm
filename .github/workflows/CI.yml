@@ -80,6 +80,7 @@ jobs:
         working-directory: wasm-chat
         run: |
           bash ../.github/workflows/build-wheels.sh
+          ls -al dist
 
       # - name: Setup Conda dependencies
       #   uses: conda-incubator/setup-miniconda@v2
