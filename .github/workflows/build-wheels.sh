@@ -34,7 +34,7 @@ length=${#PYBIN[@]}
 for ((i=0; i<$length; i++)); do
     "${PYBIN[$i]}/pip" install dist/${WHL[$i]} --force-reinstall
     "${PYBIN[$i]}/pip" install pytest
-    "${PYBIN[$i]}/pytest" -v
+    "${PYBIN[$i]}/pytest" -v -s
     # echo "${PYBIN[$i]} - ${array2[$i]}"
 done
 
