@@ -42,7 +42,7 @@ jobs:
           fetch-depth: 0
 
       - name:
-        uses: |
+        run: |
           yum install -y clang-devel
 
       - name: Setup environment
