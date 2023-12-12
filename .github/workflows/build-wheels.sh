@@ -10,6 +10,7 @@ for PYBIN in /opt/python/cp{38,39,310,311,312}*/bin; do
     # rm -rf /io/build/
     "${PYBIN}/pip" install -U maturin==1.4.0 maturin[patchelf]
     "${PYBIN}/pip" list installed
+    "${PYBIN}/pip" show maturin
     # maturin build --compatibility linux -f -r -o dist
     # "${PYBIN}/pip" install -U setuptools setuptools-rust wheel
     # "${PYBIN}/pip" wheel /io/ -w /io/dist/ --no-deps
