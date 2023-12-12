@@ -50,8 +50,8 @@ jobs:
         run: |
           bash deploy.sh
           echo "$HOME/.wasmedge/bin" >> $GITHUB_PATH
-          echo $HOME
-          ls -al $HOME
+          # echo $HOME
+          # ls -al $HOME
           tree $HOME/.wasmedge
 
       - name: Check WasmEdge Version
@@ -77,6 +77,8 @@ jobs:
 
       - name: Build wheels
         working-directory: wasm-chat
+        env:
+          LD_LIBRARY_PATH: /github/home/.wasmedge/lib;/github/home/.wasmedge/plugin;/github/home/.wasmedge
         run: |
           bash ../.github/workflows/build-wheels.sh
           ls -al dist
