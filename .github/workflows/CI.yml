@@ -68,7 +68,7 @@ jobs:
           which python
           python --version
           python3 --version
-          pip3 --version
+          manylinux-interpreters list
 
       # - name: Install Rust-stable
       #   uses: dtolnay/rust-toolchain@stable
