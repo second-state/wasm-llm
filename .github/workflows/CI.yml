@@ -67,7 +67,8 @@ jobs:
         run: |
           which python
           python --version
-          pip --version
+          python3 --version
+          pip3 --version
 
       # - name: Install Rust-stable
       #   uses: dtolnay/rust-toolchain@stable
