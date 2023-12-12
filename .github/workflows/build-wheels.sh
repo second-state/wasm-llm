@@ -6,7 +6,7 @@ set -ex
 # export PATH="$HOME/.cargo/bin:$PATH"
 
 # Compile wheels
-for PYBIN in /opt/python/cp{36,37,38,39,310}*/bin; do
+for PYBIN in /opt/python/cp{39,310,311,312}*/bin; do
     # rm -rf /io/build/
     "${PYBIN}/pip" install -U maturin==1.4.0 maturin[patchelf]
     maturin build --compatibility linux -f -r -o dist
