@@ -67,7 +67,6 @@ jobs:
         run: |
           which python
           python --version
-          python3 --version
           manylinux-interpreters list
 
       # - name: Install Rust-stable
