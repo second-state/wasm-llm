@@ -63,12 +63,6 @@ jobs:
           rustup target add ${{ matrix.target }}
           rustc --version
 
-      - name: Check python and pip
-        run: |
-          which python
-          python --version
-          manylinux-interpreters list
-
       - name: Setup Conda dependencies
         uses: conda-incubator/setup-miniconda@v2
         with:
@@ -82,6 +76,18 @@ jobs:
           # prone than conda while being completely compatible with the conda CLI
           use-mamba: true
           mamba-version: "*"
+
+      - name: Pip install maturin and maturin[patchelf]
+        # The `-l` is needed so conda environment activation works correctly
+        shell: bash -l {0}
+        run: |
+          which python
+          python --version
+          pip --version
+          pip install maturin==${{ env.MATURIN_VERSION }}
+          pip install maturin[patchelf]
+          pip list installed
+
 
       # - name: Install Rust-stable
       #   uses: dtolnay/rust-toolchain@stable
