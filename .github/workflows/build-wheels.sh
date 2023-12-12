@@ -37,9 +37,9 @@ ls -al dist/
 #     "${PYBIN[$i]}/pytest" -v -s
 # done
 
-/opt/python/cp310*/bin/pip install wasm_chat-*cp310-cp310*.whl --force-reinstall
-/opt/python/cp310*/bin/pip install pytest
-/opt/python/cp310*/bin/pytest -v -s
+/opt/python/cp310-cp310/bin/pip install dist/wasm_chat-0.1.0-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl --force-reinstall
+/opt/python/cp310-cp310/bin/pip install pytest
+/opt/python/cp310-cp310/bin/pytest -v -s
 
 # # Install packages and test
 # for PYBIN in /opt/python/cp{38,39,310,311,312}*/bin; do
