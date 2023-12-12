@@ -72,7 +72,7 @@ jobs:
       - name: Build wheels
         working-directory: wasm-chat
         run: |
-          bash .github/workflows/build-wheels.sh
+          bash ../.github/workflows/build-wheels.sh
 
       # - name: Setup Conda dependencies
       #   uses: conda-incubator/setup-miniconda@v2
