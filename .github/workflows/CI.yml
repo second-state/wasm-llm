@@ -42,11 +42,9 @@ jobs:
         with:
           fetch-depth: 0
 
-      # - name:
-      #   run: |
-      #     yum install -y clang-devel
-      #     yum install epel-release
-      #     yum install -y clang
+      - name:
+        run: |
+          yum install -y tree
 
       - name: Setup environment
         run: |
@@ -54,6 +52,7 @@ jobs:
           echo "$HOME/.wasmedge/bin" >> $GITHUB_PATH
           echo $HOME
           ls -al $HOME
+          tree $HOME/.wasmedge
 
       - name: Check WasmEdge Version
         env:
