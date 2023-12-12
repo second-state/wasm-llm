@@ -58,6 +58,10 @@ impl WasmChat {
         PluginManager::load(None).map_err(|e| WasmChatError::Operation(e.to_string()))?;
 
         // ! debug
+        let p = Path::new("/usr/local/lib/wasmedge");
+        PluginManager::load(Some(p)).map_err(|e| WasmChatError::Operation(e.to_string()))?;
+
+        // ! debug
         let s = format!(
             "names: {names:?}, count: {count}",
             names = PluginManager::names(),
