@@ -58,14 +58,12 @@ impl WasmChat {
         PluginManager::load(None).map_err(|e| WasmChatError::Operation(e.to_string()))?;
 
         // ! debug
-        println!("plugin names: {:?}", PluginManager::names());
-
         let s = format!(
             "names: {names:?}, count: {count}",
             names = PluginManager::names(),
             count = PluginManager::count()
         );
-        if PluginManager::find("wasmedge_rustls").is_err() {
+        if PluginManager::find("wasi_nn").is_err() {
             return Err(WasmChatError::Operation(format!(
                 "[DEBUG] Not found wasmedge_rustls plugin. {s}"
             )));
