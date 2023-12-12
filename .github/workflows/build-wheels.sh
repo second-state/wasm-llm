@@ -25,18 +25,21 @@ done
 
 ls -al dist/
 
-PYBIN=(/opt/python/cp38*/bin /opt/python/cp39*/bin)
-WHL=(wasm_chat-*cp38-cp38*.whl wasm_chat-*cp39-cp39*.whl)
-# Get the length of the arrays
-length=${#PYBIN[@]}
+# PYBIN=(/opt/python/cp38*/bin /opt/python/cp39*/bin)
+# WHL=(wasm_chat-*cp38-cp38*.whl wasm_chat-*cp39-cp39*.whl)
+# # Get the length of the arrays
+# length=${#PYBIN[@]}
 
-# Iterate over the arrays
-for ((i=0; i<$length; i++)); do
-    "${PYBIN[$i]}/pip" install dist/${WHL[$i]} --force-reinstall
-    "${PYBIN[$i]}/pip" install pytest
-    "${PYBIN[$i]}/pytest" -v -s
-    # echo "${PYBIN[$i]} - ${array2[$i]}"
-done
+# # Iterate over the arrays
+# for ((i=0; i<$length; i++)); do
+#     "${PYBIN[$i]}/pip" install dist/${WHL[$i]} --force-reinstall
+#     "${PYBIN[$i]}/pip" install pytest
+#     "${PYBIN[$i]}/pytest" -v -s
+# done
+
+/opt/python/cp310*/bin/pip install wasm_chat-*cp310-cp310*.whl --force-reinstall
+/opt/python/cp310*/bin/pip install pytest
+/opt/python/cp310*/bin/pytest -v -s
 
 # # Install packages and test
 # for PYBIN in /opt/python/cp{38,39,310,311,312}*/bin; do
