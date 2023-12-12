@@ -43,20 +43,21 @@ jobs:
 
       - name: Install tree
         run: |
+          yum update
           yum install -y tree
 
-      - name: Setup environment
-        run: |
-          bash deploy.sh
+      # - name: Setup environment
+      #   run: |
+      #     bash deploy.sh
 
-      - name: Check wasmedge
-        run: |
-          # echo "$HOME/.wasmedge/bin" >> $GITHUB_PATH
-          # echo $HOME
-          # ls -al $HOME
-          # tree $HOME/.wasmedge
-          tree /usr/local/lib
-          tree /usr/local/lib/wasmedge
+      # - name: Check wasmedge
+      #   run: |
+      #     # echo "$HOME/.wasmedge/bin" >> $GITHUB_PATH
+      #     # echo $HOME
+      #     # ls -al $HOME
+      #     # tree $HOME/.wasmedge
+      #     tree /usr/local/lib
+      #     tree /usr/local/lib/wasmedge
 
       # - name: Check WasmEdge Version
       #   env:

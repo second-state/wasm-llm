@@ -5,23 +5,31 @@ set -ex
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
 export PATH="$HOME/.cargo/bin:$PATH"
 
-# Compile wheels
-for PYBIN in /opt/python/cp{38,39,310,311,312}*/bin; do
-    # rm -rf /io/build/
-    "${PYBIN}/pip" install -U maturin==1.4.0 maturin[patchelf]
-    # "${PYBIN}/pip" list installed
-    # "${PYBIN}/pip" show maturin
-    "${PYBIN}/maturin" build -i "${PYBIN}/python" -r -o dist
-    # "${PYBIN}/pip" install -U setuptools setuptools-rust wheel
-    # "${PYBIN}/pip" wheel /io/ -w /io/dist/ --no-deps
-done
+# # Compile wheels
+# for PYBIN in /opt/python/cp{38,39,310,311,312}*/bin; do
+#     export PYTHON_EXECUTABLE=${PYBIN}/python
+#     bash ../../deploy.sh
+#     # rm -rf /io/build/
+#     "${PYBIN}/pip" install -U maturin==1.4.0 maturin[patchelf]
+#     # "${PYBIN}/pip" list installed
+#     # "${PYBIN}/pip" show maturin
+#     "${PYBIN}/maturin" build -i "${PYBIN}/python" -r -o dist
+#     # "${PYBIN}/pip" install -U setuptools setuptools-rust wheel
+#     # "${PYBIN}/pip" wheel /io/ -w /io/dist/ --no-deps
+# done
+
+export PYTHON_EXECUTABLE=/opt/python/cp310-cp310/bin/python
+bash ../../deploy.sh
+/opt/python/cp310-cp310/bin/pip install -U maturin==1.4.0 maturin[patchelf]
+/opt/python/cp310-cp310/bin/maturin build -i /opt/python/cp310-cp310/bin/python -r -o dist
+
 
 ls -al dist/
 
-# Bundle external shared libraries into the wheels
-for whl in dist/*cp{38,39,310,311,312}*.whl; do
-    auditwheel repair "$whl" -w dist/
-done
+# # Bundle external shared libraries into the wheels
+# for whl in dist/*cp{38,39,310,311,312}*.whl; do
+#     auditwheel repair "$whl" -w dist/
+# done
 
 ls -al dist/
 
