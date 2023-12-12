@@ -47,8 +47,6 @@ jobs:
           echo "$HOME/.wasmedge/bin" >> $GITHUB_PATH
           echo $HOME
           ls -al $HOME
-          echo $GITHUB_PATH
-          ls -al $GITHUB_PATH
 
       - name: Check WasmEdge Version
         env:
@@ -64,6 +62,12 @@ jobs:
           source $HOME/.cargo/env
           rustup target add ${{ matrix.target }}
           rustc --version
+
+      - name: Check python and pip
+        run: |
+          which python
+          python --version
+          pip --version
 
       # - name: Install Rust-stable
       #   uses: dtolnay/rust-toolchain@stable
