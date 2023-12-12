@@ -59,10 +59,16 @@ impl WasmChat {
 
         // ! debug
         println!("plugin names: {:?}", PluginManager::names());
+
+        let s = format!(
+            "names: {names:?}, count: {count}",
+            names = PluginManager::names(),
+            count = PluginManager::count()
+        );
         if PluginManager::find("wasmedge_rustls").is_err() {
-            return Err(WasmChatError::Operation(
-                "[DEBUG] Not found wasmedge_rustls plugin".to_string(),
-            ));
+            return Err(WasmChatError::Operation(format!(
+                "[DEBUG] Not found wasmedge_rustls plugin. {s}"
+            )));
         }
 
         // preload named model
