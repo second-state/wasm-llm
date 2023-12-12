@@ -29,7 +29,6 @@ env:
 jobs:
   linux-wheels:
     runs-on: ubuntu-latest
-    # container: quay.io/pypa/manylinux2014_x86_64
     container: wasmedge/wasmedge:manylinux2014_x86_64
     strategy:
       matrix:
@@ -42,24 +41,29 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name:
+      - name: Install tree
         run: |
           yum install -y tree
 
       - name: Setup environment
         run: |
           bash deploy.sh
-          echo "$HOME/.wasmedge/bin" >> $GITHUB_PATH
+
+      - name: Check wasmedge
+        run: |
+          # echo "$HOME/.wasmedge/bin" >> $GITHUB_PATH
           # echo $HOME
           # ls -al $HOME
-          tree $HOME/.wasmedge
+          # tree $HOME/.wasmedge
+          tree /usr/local/lib
+          tree /usr/local/lib/wasmedge
 
-      - name: Check WasmEdge Version
-        env:
-          LD_LIBRARY_PATH: /github/home/.wasmedge/lib
-        run: |
-          wasmedge --version
-          which wasmedge
+      # - name: Check WasmEdge Version
+      #   env:
+      #     LD_LIBRARY_PATH: /github/home/.wasmedge/lib
+      #   run: |
+      #     wasmedge --version
+      #     which wasmedge
 
       # - name: Install Rust toolchain
       #   run: |

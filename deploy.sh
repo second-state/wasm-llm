@@ -69,7 +69,8 @@ else
     # Run the command to install WasmEdge
     VERSION=0.13.5
     if curl -sSf https://raw.githubusercontent.com/WasmEdge/WasmEdge/master/utils/install.sh | bash -s -- -v $VERSION -p /usr/local --plugins wasi_nn-ggml; then
-        source $HOME/.wasmedge/env
+        # source $HOME/.wasmedge/env
+        source /github/home/.bashrc
 
     else
         echo "Failed to install WasmEdge"
