@@ -57,6 +57,14 @@ impl WasmChat {
         // load wasinn-pytorch-plugin from the default plugin directory: /usr/local/lib/wasmedge
         PluginManager::load(None).map_err(|e| WasmChatError::Operation(e.to_string()))?;
 
+        // ! debug
+        println!("plugin names: {:?}", PluginManager::names());
+        if PluginManager::find("wasmedge_rustls").is_err() {
+            return Err(WasmChatError::Operation(
+                "[DEBUG] Not found wasmedge_rustls plugin".to_string(),
+            ));
+        }
+
         // preload named model
         PluginManager::nn_preload(vec![NNPreload::new(
             "default",
