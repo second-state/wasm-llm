@@ -70,6 +70,7 @@ jobs:
           ls -al /opt/python/cp310*/bin
 
       - name: Build wheels
+        working-directory: wasm-chat
         run: |
           bash .github/workflows/build-wheels.sh
 
