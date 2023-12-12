@@ -1,9 +1,9 @@
 #!/bin/bash
 set -ex
 
-# # Install Rustup
-# curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
-# export PATH="$HOME/.cargo/bin:$PATH"
+# Install Rustup
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+export PATH="$HOME/.cargo/bin:$PATH"
 
 # Compile wheels
 for PYBIN in /opt/python/cp{38,39,310,311,312}*/bin; do
