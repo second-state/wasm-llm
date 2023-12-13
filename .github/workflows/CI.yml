@@ -9,13 +9,15 @@ on:
   push:
     paths-ignore:
       - "**/*.md"
+      - "*.md"
     branches:
-      "**"
+      - main
+      - "release/**"
+      - "ci/**"
     tags:
-      - 'chat/**'
+      - "chat/**"
   pull_request:
   workflow_dispatch:
-
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -23,7 +25,6 @@ concurrency:
 
 env:
   PACKAGE_NAME: wasm_chat
-  PYTHON_VERSION: "3.10"
   MATURIN_VERSION: "1.4.0"
 
 jobs:
@@ -113,14 +114,11 @@ jobs:
   #     #     pip install maturin[patchelf]
   #     #     pip list installed
 
-
   #     # - name: Install Rust-stable
   #     #   uses: dtolnay/rust-toolchain@stable
   #     #   with:
   #     #     toolchain: ${{ matrix.rust }}
   #     #     targets: ${{ matrix.target}}
-
-
 
   linux:
     runs-on: ubuntu-22.04
@@ -190,14 +188,14 @@ jobs:
           maturin build --compatibility linux -f -r -o dist --target ${{ matrix.target }}
 
       - name: check artifacts
-        working-directory: 'wasm-chat'
+        working-directory: "wasm-chat"
         shell: bash -l {0}
         run: |
           ls -al dist
 
       - name: Test wheel-310
         if: ${{ (matrix.target == 'x86_64-unknown-linux-gnu') && (matrix.python_version == '3.10') }}
-        working-directory: 'wasm-chat'
+        working-directory: "wasm-chat"
         env:
           LD_LIBRARY_PATH: /github/home/.wasmedge/lib
         shell: bash -l {0}
@@ -208,7 +206,7 @@ jobs:
 
       - name: Test wheel-311
         if: ${{ (matrix.target == 'x86_64-unknown-linux-gnu') && (matrix.python_version == '3.11') }}
-        working-directory: 'wasm-chat'
+        working-directory: "wasm-chat"
         env:
           LD_LIBRARY_PATH: /github/home/.wasmedge/lib
         shell: bash -l {0}
@@ -219,7 +217,7 @@ jobs:
 
       - name: Test wheel-39
         if: ${{ (matrix.target == 'x86_64-unknown-linux-gnu') && (matrix.python_version == '3.9') }}
-        working-directory: 'wasm-chat'
+        working-directory: "wasm-chat"
         env:
           LD_LIBRARY_PATH: /github/home/.wasmedge/lib
         shell: bash -l {0}
@@ -230,7 +228,7 @@ jobs:
 
       - name: Test wheel-38
         if: ${{ (matrix.target == 'x86_64-unknown-linux-gnu') && (matrix.python_version == '3.8') }}
-        working-directory: 'wasm-chat'
+        working-directory: "wasm-chat"
         env:
           LD_LIBRARY_PATH: /github/home/.wasmedge/lib
         shell: bash -l {0}
@@ -282,11 +280,11 @@ jobs:
         with:
           target: ${{ matrix.target }}
           args: --release --out dist --find-interpreter
-          sccache: 'true'
+          sccache: "true"
           working-directory: wasm-chat
 
       - name: check artifacts
-        working-directory: 'wasm-chat'
+        working-directory: "wasm-chat"
         shell: bash -l {0}
         run: |
           ls -al dist
@@ -363,7 +361,7 @@ jobs:
           maturin sdist -o dist
 
       - name: check artifacts
-        working-directory: 'wasm-chat'
+        working-directory: "wasm-chat"
         shell: bash -l {0}
         run: |
           ls -al dist
