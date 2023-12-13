@@ -44,22 +44,22 @@ jobs:
       - name:
         run: |
           yum install -y clang-devel
-          yum install epel-release
-          yum install -y clang
+          # yum install epel-release
+          # yum install -y clang
 
-      - name: Setup environment
-        run: |
-          bash deploy.sh
-          echo "$HOME/.wasmedge/bin" >> $GITHUB_PATH
-          echo $HOME
-          ls -al $HOME
+      # - name: Setup environment
+      #   run: |
+      #     bash deploy.sh
+      #     echo "$HOME/.wasmedge/bin" >> $GITHUB_PATH
+      #     echo $HOME
+      #     ls -al $HOME
 
-      - name: Check WasmEdge Version
-        env:
-          LD_LIBRARY_PATH: /github/home/.wasmedge/lib
-        run: |
-          wasmedge --version
-          which wasmedge
+      # - name: Check WasmEdge Version
+      #   env:
+      #     LD_LIBRARY_PATH: /github/home/.wasmedge/lib
+      #   run: |
+      #     wasmedge --version
+      #     which wasmedge
 
       # - name: Install Rust toolchain
       #   run: |
