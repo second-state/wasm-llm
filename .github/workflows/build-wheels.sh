@@ -66,16 +66,16 @@ tree $HOME/.wasmedge
 
 
 # install maturin, patchelf and zig
-/opt/python/cp310-cp310/bin/pip install -U maturin==1.4.0 maturin[patchelf] ziglang==0.11.0
+/opt/python/cp310-cp310/bin/pip install -U maturin==1.4.0 maturin[patchelf]
 
 # check binaries
 /opt/python/cp310-cp310/bin/pip list installed
-/opt/python/cp310-cp310/bin/pip show ziglang
+# /opt/python/cp310-cp310/bin/pip show ziglang
 ls -al /opt/python/cp310-cp310/bin
 # which zig
 
 # build wheels
-/opt/python/cp310-cp310/bin/maturin build -i /opt/python/cp310-cp310/bin/python -r -o dist --zig
+/opt/python/cp310-cp310/bin/maturin build -i /opt/python/cp310-cp310/bin/python -r -o dist
 
 
 ls -al dist/
@@ -84,6 +84,8 @@ ls -al dist/
 # for whl in dist/*cp{38,39,310,311,312}*.whl; do
 #     auditwheel repair "$whl" -w dist/
 # done
+
+auditwheel repair dist/*cp310*.whl -w dist/
 
 ls -al dist/
 
