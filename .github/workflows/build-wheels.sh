@@ -23,8 +23,8 @@ echo "Current directory: $current_dir"
 
 export PYTHON_EXECUTABLE=/opt/python/cp310-cp310/bin/python
 bash ../deploy.sh
-/opt/python/cp310-cp310/bin/pip install -U maturin==1.4.0 maturin[patchelf]
-/opt/python/cp310-cp310/bin/maturin build -i /opt/python/cp310-cp310/bin/python -r -o dist
+/opt/python/cp310-cp310/bin/pip install -U maturin==1.4.0 maturin[patchelf] ziglang
+/opt/python/cp310-cp310/bin/maturin build -i /opt/python/cp310-cp310/bin/python -r -o dist --zig
 
 
 ls -al dist/
