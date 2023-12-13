@@ -73,9 +73,10 @@ tree $HOME/.wasmedge
 # /opt/python/cp310-cp310/bin/pip show ziglang
 ls -al /opt/python/cp310-cp310/bin
 # which zig
+yum info clang
 
 # build wheels
-/opt/python/cp310-cp310/bin/maturin build -i /opt/python/cp310-cp310/bin/python -r -o dist
+/opt/python/cp310-cp310/bin/maturin build --compatibility linux -i /opt/python/cp310-cp310/bin/python -r -o dist
 
 
 ls -al dist/
