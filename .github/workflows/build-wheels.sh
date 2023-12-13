@@ -69,6 +69,8 @@ tree $HOME/.wasmedge
 /opt/python/cp310-cp310/bin/pip install -U maturin==1.4.0 maturin[patchelf] ziglang==0.11.0
 
 # check binaries
+/opt/python/cp310-cp310/bin/pip list installed
+/opt/python/cp310-cp310/bin/pip show zig
 which zig
 
 # # install zig
