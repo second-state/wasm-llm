@@ -9,13 +9,13 @@ on:
   push:
     paths-ignore:
       - "**/*.md"
+      - "*.md"
     branches:
-      "**"
+      - "**"
     tags:
-      - 'chat/**'
+      - "chat/**"
   pull_request:
   workflow_dispatch:
-
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -23,7 +23,6 @@ concurrency:
 
 env:
   PACKAGE_NAME: wasm_chat
-  PYTHON_VERSION: "3.10"
   MATURIN_VERSION: "1.4.0"
 
 jobs:
@@ -35,7 +34,7 @@ jobs:
       matrix:
         target: [x86_64-unknown-linux-gnu] # aarch64-unknown-linux-gnu
         rust: [1.73]
-        python_version: [3.11, "3.10", 3.9, 3.8]
+        python_version: [3.12, 3.11, "3.10", 3.9, 3.8]
     steps:
       - name: Checkout wasm-llm
         uses: actions/checkout@v3
@@ -95,53 +94,63 @@ jobs:
           maturin build --compatibility linux -f -r -o dist --target ${{ matrix.target }}
 
       - name: check artifacts
-        working-directory: 'wasm-chat'
+        working-directory: "wasm-chat"
         shell: bash -l {0}
         run: |
           ls -al dist
 
       - name: Test wheel-310
         if: ${{ (matrix.target == 'x86_64-unknown-linux-gnu') && (matrix.python_version == '3.10') }}
-        working-directory: 'wasm-chat'
+        working-directory: "wasm-chat"
         env:
           LD_LIBRARY_PATH: /github/home/.wasmedge/lib
         shell: bash -l {0}
         run: |
-          pip install dist/${{ env.PACKAGE_NAME }}-0.1.0-cp310-cp310-*_x86_64.whl --force-reinstall
+          pip install dist/${{ env.PACKAGE_NAME }}-0.1.0-cp310-cp310-linux_x86_64.whl --force-reinstall
           pip install pytest
           pytest -v
 
       - name: Test wheel-311
         if: ${{ (matrix.target == 'x86_64-unknown-linux-gnu') && (matrix.python_version == '3.11') }}
-        working-directory: 'wasm-chat'
+        working-directory: "wasm-chat"
         env:
           LD_LIBRARY_PATH: /github/home/.wasmedge/lib
         shell: bash -l {0}
         run: |
-          pip install dist/${{ env.PACKAGE_NAME }}-0.1.0-cp311-cp311-*_x86_64.whl --force-reinstall
+          pip install dist/${{ env.PACKAGE_NAME }}-0.1.0-cp311-cp311-linux_x86_64.whl --force-reinstall
+          pip install pytest
+          pytest -v
+
+      - name: Test wheel-312
+        if: ${{ (matrix.target == 'x86_64-unknown-linux-gnu') && (matrix.python_version == '3.12') }}
+        working-directory: "wasm-chat"
+        env:
+          LD_LIBRARY_PATH: /github/home/.wasmedge/lib
+        shell: bash -l {0}
+        run: |
+          pip install dist/${{ env.PACKAGE_NAME }}-0.1.0-cp312-cp312-linux_x86_64.whl --force-reinstall
           pip install pytest
           pytest -v
 
       - name: Test wheel-39
         if: ${{ (matrix.target == 'x86_64-unknown-linux-gnu') && (matrix.python_version == '3.9') }}
-        working-directory: 'wasm-chat'
+        working-directory: "wasm-chat"
         env:
           LD_LIBRARY_PATH: /github/home/.wasmedge/lib
         shell: bash -l {0}
         run: |
-          pip install dist/${{ env.PACKAGE_NAME }}-0.1.0-cp39-cp39-*_x86_64.whl --force-reinstall
+          pip install dist/${{ env.PACKAGE_NAME }}-0.1.0-cp39-cp39-linux_x86_64.whl --force-reinstall
           pip install pytest
           pytest -v
 
       - name: Test wheel-38
         if: ${{ (matrix.target == 'x86_64-unknown-linux-gnu') && (matrix.python_version == '3.8') }}
-        working-directory: 'wasm-chat'
+        working-directory: "wasm-chat"
         env:
           LD_LIBRARY_PATH: /github/home/.wasmedge/lib
         shell: bash -l {0}
         run: |
-          ls -l dist
-          pip install dist/${{ env.PACKAGE_NAME }}-0.1.0-cp38-cp38-*_x86_64.whl --force-reinstall
+          pip install dist/${{ env.PACKAGE_NAME }}-0.1.0-cp38-cp38-linux_x86_64.whl --force-reinstall
           pip install pytest
           pytest -v
 
@@ -157,7 +166,7 @@ jobs:
       matrix:
         target: [x86_64-apple-darwin, aarch64-apple-darwin]
         rust: [1.73]
-        python_version: [3.11, "3.10", 3.9, 3.8]
+        python_version: [3.12, 3.11, "3.10", 3.9, 3.8]
     steps:
       - name: Checkout wasm-llm
         uses: actions/checkout@v3
@@ -188,11 +197,11 @@ jobs:
         with:
           target: ${{ matrix.target }}
           args: --release --out dist --find-interpreter
-          sccache: 'true'
+          sccache: "true"
           working-directory: wasm-chat
 
       - name: check artifacts
-        working-directory: 'wasm-chat'
+        working-directory: "wasm-chat"
         shell: bash -l {0}
         run: |
           ls -al dist
@@ -210,7 +219,7 @@ jobs:
     strategy:
       matrix:
         rust: [1.73]
-        python_version: [3.11, "3.10", 3.9, 3.8]
+        python_version: [3.12, 3.11, "3.10", 3.9, 3.8]
     steps:
       - name: Checkout wasm-llm
         uses: actions/checkout@v3
@@ -269,7 +278,7 @@ jobs:
           maturin sdist -o dist
 
       - name: check artifacts
-        working-directory: 'wasm-chat'
+        working-directory: "wasm-chat"
         shell: bash -l {0}
         run: |
           ls -al dist
@@ -280,20 +289,20 @@ jobs:
           name: wheels
           path: ${{ github.workspace }}/wasm-chat/dist
 
-  release:
-    name: Release
-    runs-on: ubuntu-latest
-    if: "startsWith(github.ref, 'refs/tags/')"
-    needs: [linux, macos, sdist]
-    steps:
-      - uses: actions/download-artifact@v3
-        with:
-          name: wheels
+  # release:
+  #   name: Release
+  #   runs-on: ubuntu-latest
+  #   if: "startsWith(github.ref, 'refs/tags/')"
+  #   needs: [linux, macos, sdist]
+  #   steps:
+  #     - uses: actions/download-artifact@v3
+  #       with:
+  #         name: wheels
 
-      - name: Publish to PyPI
-        env:
-          MATURIN_PYPI_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
-        uses: PyO3/maturin-action@v1
-        with:
-          command: upload
-          args: --non-interactive --skip-existing *
+  #     - name: Publish to PyPI
+  #       env:
+  #         MATURIN_PYPI_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
+  #       uses: PyO3/maturin-action@v1
+  #       with:
+  #         command: upload
+  #         args: --non-interactive --skip-existing *
