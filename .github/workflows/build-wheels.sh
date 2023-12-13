@@ -58,11 +58,11 @@ export PYTHON_EXECUTABLE=/opt/python/cp310-cp310/bin/python
 
 # install WasmEdge runtime
 bash ../deploy.sh
-source /github/home/.bashrc
+source $HOME/.bashrc
 
 # display .wasmedge directory
+yum install -y tree
 tree $HOME/.wasmedge
-tree /github/home/.wasmedge
 
 
 # install maturin, patchelf and zig
