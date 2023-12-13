@@ -11,9 +11,7 @@ on:
       - "**/*.md"
       - "*.md"
     branches:
-      - main
-      - "release/**"
-      - "ci/**"
+      - "**"
     tags:
       - "chat/**"
   pull_request:
