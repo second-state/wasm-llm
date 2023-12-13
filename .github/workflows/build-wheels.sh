@@ -57,7 +57,15 @@ export PYTHON_EXECUTABLE=/opt/python/cp310-cp310/bin/python
 # install WasmEdge runtime
 bash ../deploy.sh
 
-/opt/python/cp310-cp310/bin/pip install -U maturin==1.4.0 maturin[patchelf] ziglang
+# install maturin, patchelf and zig
+/opt/python/cp310-cp310/bin/pip install -U maturin==1.4.0 maturin[patchelf] ziglang==0.11.0
+
+# # install zig
+# yum install epel-release
+# yum install snapd
+# systemctl enable --now snapd.socket
+# ln -s /var/lib/snapd/snap /snap
+# snap install zig --beta --classic
 
 # build wheels
 /opt/python/cp310-cp310/bin/maturin build -i /opt/python/cp310-cp310/bin/python -r -o dist --zig
