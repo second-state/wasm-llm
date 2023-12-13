@@ -109,10 +109,6 @@ impl WasmChat {
                 None,
             );
 
-        let vm = vm
-            .auto_detect_plugins()
-            .map_err(|e| WasmChatError::Operation(e.to_string()))?;
-
         Ok(WasmChat {
             dock: VmDock::new(vm),
             template_ty,
