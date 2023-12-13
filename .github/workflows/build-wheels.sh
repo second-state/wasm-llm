@@ -71,14 +71,8 @@ tree $HOME/.wasmedge
 # check binaries
 /opt/python/cp310-cp310/bin/pip list installed
 /opt/python/cp310-cp310/bin/pip show ziglang
+ls -al /opt/python/cp310-cp310/bin
 # which zig
-
-# install zig
-yum install epel-release
-yum install snapd
-systemctl enable --now snapd.socket
-ln -s /var/lib/snapd/snap /snap
-snap install zig --beta --classic
 
 # build wheels
 /opt/python/cp310-cp310/bin/maturin build -i /opt/python/cp310-cp310/bin/python -r -o dist --zig
