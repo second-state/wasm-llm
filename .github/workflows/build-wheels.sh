@@ -35,6 +35,7 @@ set -ex
 # Install Rustup
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
 export PATH="$HOME/.cargo/bin:$PATH"
+echo "path: $PATH"
 
 # # Compile wheels
 # for PYBIN in /opt/python/cp{38,39,310,311,312}*/bin; do
@@ -51,11 +52,18 @@ export PATH="$HOME/.cargo/bin:$PATH"
 
 current_dir=$(pwd)
 echo "Current directory: $current_dir"
+echo "home directory: $HOME"
 
 export PYTHON_EXECUTABLE=/opt/python/cp310-cp310/bin/python
 
 # install WasmEdge runtime
 bash ../deploy.sh
+source /github/home/.bashrc
+
+# display .wasmedge directory
+tree $HOME/.wasmedge
+tree /github/home/.wasmedge
+
 
 # install maturin, patchelf and zig
 /opt/python/cp310-cp310/bin/pip install -U maturin==1.4.0 maturin[patchelf] ziglang==0.11.0
