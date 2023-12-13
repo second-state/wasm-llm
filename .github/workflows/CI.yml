@@ -29,7 +29,8 @@ env:
 jobs:
   linux-wheels:
     runs-on: ubuntu-latest
-    container: wasmedge/wasmedge:manylinux2014_x86_64
+    # container: wasmedge/wasmedge:manylinux2014_x86_64
+    container: quay.io/pypa/manylinux1_x86_64
     strategy:
       matrix:
         target: [x86_64-unknown-linux-gnu] # aarch64-unknown-linux-gnu
@@ -82,8 +83,8 @@ jobs:
 
       - name: Build wheels
         working-directory: wasm-chat
-        env:
-          LD_LIBRARY_PATH: /github/home/.wasmedge/lib;/github/home/.wasmedge/plugin;/github/home/.wasmedge
+        # env:
+        #   LD_LIBRARY_PATH: /github/home/.wasmedge/lib;/github/home/.wasmedge/plugin;/github/home/.wasmedge
         run: |
           bash ../.github/workflows/build-wheels.sh
           ls -al dist

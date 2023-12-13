@@ -22,8 +22,13 @@ current_dir=$(pwd)
 echo "Current directory: $current_dir"
 
 export PYTHON_EXECUTABLE=/opt/python/cp310-cp310/bin/python
+
+# install WasmEdge runtime
 bash ../deploy.sh
+
 /opt/python/cp310-cp310/bin/pip install -U maturin==1.4.0 maturin[patchelf] ziglang
+
+# build wheels
 /opt/python/cp310-cp310/bin/maturin build -i /opt/python/cp310-cp310/bin/python -r -o dist --zig
 
 
