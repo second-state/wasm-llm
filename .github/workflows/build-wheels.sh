@@ -68,6 +68,9 @@ tree $HOME/.wasmedge
 # install maturin, patchelf and zig
 /opt/python/cp310-cp310/bin/pip install -U maturin==1.4.0 maturin[patchelf] ziglang==0.11.0
 
+# check binaries
+which zig
+
 # # install zig
 # yum install epel-release
 # yum install snapd
