@@ -29,8 +29,7 @@ env:
 jobs:
   linux-wheels:
     runs-on: ubuntu-latest
-    # container: wasmedge/wasmedge:manylinux2014_x86_64
-    container: quay.io/pypa/manylinux1_x86_64
+    container: wasmedge/wasmedge:manylinux2014_x86_64
     strategy:
       matrix:
         target: [x86_64-unknown-linux-gnu] # aarch64-unknown-linux-gnu
