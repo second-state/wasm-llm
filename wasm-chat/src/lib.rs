@@ -54,8 +54,12 @@ impl WasmChat {
         };
         let path_wasm_file = Path::new(&wasm_file);
 
-        // load wasinn-pytorch-plugin from the default plugin directory: /usr/local/lib/wasmedge
-        PluginManager::load(None).map_err(|e| WasmChatError::Operation(e.to_string()))?;
+        // PluginManager::load(None).map_err(|e| WasmChatError::Operation(e.to_string()))?;
+
+        let s = format!("{}/.wasmedge/plugin", std::env::var("HOME").unwrap());
+        println!("plugin path: {}", &s);
+        let p = Path::new(&s);
+        PluginManager::load(Some(p)).map_err(|e| WasmChatError::Operation(e.to_string()))?;
 
         // preload named model
         PluginManager::nn_preload(vec![NNPreload::new(
