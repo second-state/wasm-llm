@@ -4,7 +4,7 @@ import sys
 import urllib.request
 import time
 
-sys.path.append("/home/vivi/workspace/streamlit/langchain/libs/langchain")
+sys.path.append("../langchain/libs/langchain")
 
 from langchain.chat_models.wasm_chat import ChatWasmService
 from langchain.schema.messages import AIMessage, HumanMessage, SystemMessage
