@@ -142,6 +142,8 @@ if st.session_state.start_chat:
         if uploaded_files and len(uploaded_files) > 0:
             num_files = len(st.session_state.uploaded_files)
             for f in uploaded_files:
+                if not os.path.exists(DOCUMENT_SOURCE_DIRECTORY):
+                    os.makedirs(DOCUMENT_SOURCE_DIRECTORY)
                 file_path = os.path.join(DOCUMENT_SOURCE_DIRECTORY, f.name)
                 if file_path not in st.session_state.uploaded_files:
                     print(f"[INFO] Saving {f.name}")
