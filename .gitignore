@@ -1,8 +1,11 @@
-wasm-infer/target
+wasm-infer/target/
 *.gguf
 wasm-bot/__pycache__/
 wasm-rag/__pycache__/
 wasm-rag/db/
-wasm-rag/source_documents
+wasm-rag/source_documents/
 wasm-chat/target
 wasm-chat/tests/__pycache__/
+wasm-rag-service/db/
+wasm-rag-service/source_documents/
+wasm-rag-service/__pycache__/

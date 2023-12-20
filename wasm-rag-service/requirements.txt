@@ -1,0 +1,5 @@
+streamlit
+gpt4all # GPT4AllEmbeddings
+sentence-transformers # HuggingFaceEmbeddings
+chromadb
+unstructured[all-docs]
