@@ -86,7 +86,7 @@ AVAILABLE_MODELS = {
 }
 
 with st.sidebar:
-    st.image("assets/log.png")
+    st.image("assets/logo.png")
     st.subheader("", divider="grey")
     st.write("")
     model_name = st.selectbox("Pick your model", AVAILABLE_MODELS.keys(), index=0)

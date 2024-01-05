@@ -1,14 +1,14 @@
 import os
-import streamlit as st
 import sys
-import urllib.request
 import time
+import urllib.request
+
+import streamlit as st
 
 sys.path.append("/home/ubuntu/workspace/langchain/libs/langchain")
 
 from langchain.chat_models.wasm_chat import ChatWasmLocal, PromptTemplateType
 from langchain.schema.messages import AIMessage, HumanMessage, SystemMessage
-
 
 st.set_page_config(layout="wide", page_title="Wasm Chat")
 
@@ -70,7 +70,7 @@ AVAILABLE_MODELS = {
 }
 
 with st.sidebar:
-    st.image("assets/log.png")
+    st.image("assets/logo.png")
     st.subheader("", divider="grey")
     st.write("")
     model_name = st.selectbox("Pick your model", AVAILABLE_MODELS.keys(), index=0)

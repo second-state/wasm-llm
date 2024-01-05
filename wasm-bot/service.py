@@ -13,7 +13,8 @@ from langchain_core.messages import AIMessage, HumanMessage, SystemMessage
 st.set_page_config(layout="wide", page_title="Wasm Chat")
 
 # service_url = os.environ.get("DEFAULT_SERVICE_URL")
-service_url = "https://b008-54-186-154-209.ngrok-free.app"
+# service_url = "https://b008-54-186-154-209.ngrok-free.app"
+service_url = "https://f370-50-112-58-64.ngrok-free.app"
 if service_url is None:
     raise ValueError("The 'DEFAULT_SERVICE_URL' is not set.")
 
@@ -34,7 +35,7 @@ if "start_chat" not in st.session_state:
     st.session_state.start_chat = False
 
 with st.sidebar:
-    st.image("assets/log.png")
+    st.image("assets/logo.png")
     st.subheader("", divider="grey")
     st.write("")
 
@@ -62,7 +63,7 @@ with st.sidebar:
 
 
 st.title("💬 Wasmbot")
-st.caption("🚀 A chatbot powered by WasmEdge Runtime")
+st.caption("🚀hatbot powered by LlamaEdge!")
 write_message("assistant", "Hello 👋, how can I help you?")
 
 if st.session_state.start_chat:
@@ -89,6 +90,7 @@ if st.session_state.start_chat:
         with st.chat_message("assistant"):
             # invoke wasm_chat
             ai_message = st.session_state.wasm_chat(st.session_state.messages)
+            print(f"ai_message: {ai_message}")
             st.markdown(ai_message.content)
             # Add assistant response to chat history
             st.session_state.messages.append(ai_message)
