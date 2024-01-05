@@ -90,7 +90,6 @@ if st.session_state.start_chat:
         with st.chat_message("assistant"):
             # invoke wasm_chat
             ai_message = st.session_state.wasm_chat(st.session_state.messages)
-            print(f"ai_message: {ai_message}")
             st.markdown(ai_message.content)
             # Add assistant response to chat history
             st.session_state.messages.append(ai_message)
