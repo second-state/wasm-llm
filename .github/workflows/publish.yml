@@ -31,7 +31,7 @@ jobs:
         run: |
           cd wasm-infer
           cargo build --target wasm32-wasi --release
-          cp ./target/wasm32-wasi/release/llama-simple.wasm ../llama-simple.wasm
+          cp ./target/wasm32-wasi/release/wasm_infer.wasm ../wasm_infer.wasm
 
       - name: Calculate checksum
         id: checksum
