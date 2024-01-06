@@ -44,8 +44,8 @@ jobs:
       - name: Tag and release names
         id: tag_and_release_names
         run: |
-          echo "tag_name=release/${{ github.event.inputs.create_release }}" >> $GITHUB_OUTPUT
-          echo "release_name=Release ${{ github.event.inputs.create_release }}" >> $GITHUB_OUTPUT
+          echo "tag_name=release/${{ github.event.inputs.release_version }}" >> $GITHUB_OUTPUT
+          echo "release_name=Release ${{ github.event.inputs.release_version }}" >> $GITHUB_OUTPUT
 
       - name: Debug Info
         run: |
