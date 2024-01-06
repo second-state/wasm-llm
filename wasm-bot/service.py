@@ -50,7 +50,9 @@ with st.sidebar:
         st.session_state.start_chat = True
     # base-input
     elif service_option == SERVICE_URL_CUSTOM:
-        title = st.text_input("Input service URL,Press Enter to apply.")
+        title = st.text_input(
+            "Input service URL,Press Enter to apply.", value="http://localhost:8080"
+        )
         if not title:
             st.session_state.start_chat = False
         else:
