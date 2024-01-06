@@ -62,5 +62,5 @@ jobs:
           draft: false
           prerelease: false
           files: |
-            wasm-infer.wasm
+            wasm_infer.wasm
             SHA256SUM
