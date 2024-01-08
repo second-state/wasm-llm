@@ -360,6 +360,7 @@ jobs:
             my-artifact/wasm_chat-*.whl
             my-artifact/wasm_chat-*.tar.gz
             my-artifact/wasm_infer.wasm
+            my-artifact/deploy.sh
             my-artifact/SHA256SUM
 
   # publish-pypi:
