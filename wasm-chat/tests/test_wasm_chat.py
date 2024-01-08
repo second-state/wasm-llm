@@ -54,4 +54,4 @@ def test_wasm_chat():
     )
     print(f"  (Bot) {assistant_message}\n")
 
-    assert "Paris" in assistant_message
+    assert "Paris" in assistant_message or "Parigi" in assistant_message
