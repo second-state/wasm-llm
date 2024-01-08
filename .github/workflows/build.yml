@@ -168,7 +168,7 @@ jobs:
     runs-on: macos-latest
     strategy:
       matrix:
-        target: [x86_64-apple-darwin, aarch64-apple-darwin]
+        target: [x86_64-apple-darwin]
         rust: [1.73]
         python_version: [3.12, 3.11, "3.10", 3.9, 3.8]
     steps:
@@ -190,13 +190,11 @@ jobs:
         run: |
           bash deploy.sh
           echo "$HOME/.wasmedge/bin" >> $GITHUB_PATH
-          which wasmedge
-          wasmedge --version
 
-      # - name: Check WasmEdge Version
-      #   run: |
-      #     wasmedge --version
-      #     which wasmedge
+      - name: Check WasmEdge Version
+        run: |
+          wasmedge --version
+          which wasmedge
 
       - name: Build wheels
         uses: PyO3/maturin-action@v1
