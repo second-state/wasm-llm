@@ -159,10 +159,10 @@ jobs:
           pytest -v
 
       - name: Upload wheels
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
-          name: wheels
-          path: ${{ github.workspace }}/wasm-chat/dist
+          name: my-artifact-wasm-chat-${{ matrix.target }}-${{ matrix.python_version }}
+          path: ${{ github.workspace }}/wasm-chat/dist/*.whl
 
   build-chat-macos:
     runs-on: macos-latest
@@ -189,12 +189,12 @@ jobs:
       - name: Setup environment
         run: |
           bash deploy.sh
-          echo "$HOME/.wasmedge/bin" >> $GITHUB_PATH
+          # echo "$HOME/.wasmedge/bin" >> $GITHUB_PATH
 
-      - name: Check WasmEdge Version
-        run: |
-          wasmedge --version
-          which wasmedge
+      # - name: Check WasmEdge Version
+      #   run: |
+      #     wasmedge --version
+      #     which wasmedge
 
       - name: Build wheels
         uses: PyO3/maturin-action@v1
@@ -211,10 +211,10 @@ jobs:
           ls -al dist
 
       - name: Upload wheels
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
-          name: wheels
-          path: ${{ github.workspace }}/wasm-chat/dist
+          name: my-artifact-wasm-chat-${{ matrix.target }}-${{ matrix.python_version }}
+          path: ${{ github.workspace }}/wasm-chat/dist/*.whl
 
   build-chat-sdist:
     runs-on: ubuntu-22.04
@@ -223,7 +223,7 @@ jobs:
     strategy:
       matrix:
         rust: [1.73]
-        python_version: [3.12, 3.11, "3.10", 3.9]
+        python_version: [3.11]
     steps:
       - name: Checkout wasm-llm
         uses: actions/checkout@v3
@@ -288,10 +288,10 @@ jobs:
           ls -al dist
 
       - name: Upload sdist
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
-          name: wheels
-          path: ${{ github.workspace }}/wasm-chat/dist
+          name: my-artifact-wasm-chat-sdist
+          path: ${{ github.workspace }}/wasm-chat/dist/*.tar.gz
 
   build-infer:
     runs-on: ubuntu-latest
@@ -313,20 +313,33 @@ jobs:
           cargo build --target wasm32-wasi --release
           cp ./target/wasm32-wasi/release/wasm_infer.wasm ../wasm_infer.wasm
 
+      - name: Upload sdist
+        uses: actions/upload-artifact@v4
+        with:
+          name: my-artifact-wasm-infer
+          path: wasm_infer.wasm
+
   release:
-    if: ${{ github.ref == 'refs/heads/main' && github.event.inputs.create_release == 'true' }}
+    if: ${{ github.ref == 'refs/heads/ci-update-build-workflow' && github.event.inputs.create_release == 'true' }}
     runs-on: ubuntu-latest
     needs: [build-chat-linux, build-chat-macos, build-chat-sdist, build-infer]
     steps:
-      - name: Clone project
-        id: checkout
-        uses: actions/checkout@v3
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: my-artifact
+          pattern: my-artifact-wasm-*
+          merge-multiple: true
+
+      - run: ls -R my-artifact
 
       - name: Calculate checksum
         id: checksum
         run: |
-          sha256sum wasm_infer.wasm > SHA256SUM
-          sha256sum wasm-chat/dist/*.whl >> SHA256SUM
+          cd my-artifact
+          for file in *; do
+            sha256sum "$file" >> SHA256SUM
+          done
 
           echo "Debug info(SHA256SUM):"
           cat SHA256SUM
@@ -347,8 +360,10 @@ jobs:
           draft: false
           prerelease: false
           files: |
-            wasm_infer.wasm
-            SHA256SUM
+            my-artifact/wasm_chat-*.whl
+            my-artifact/wasm_chat-*.tar.gz
+            my-artifact/wasm_infer.wasm
+            my-artifact/SHA256SUM
 
   # publish-pypi:
   #   name: Release
