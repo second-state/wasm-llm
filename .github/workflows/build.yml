@@ -320,7 +320,7 @@ jobs:
           path: wasm_infer.wasm
 
   release:
-    if: ${{ github.ref == 'refs/heads/ci-update-build-workflow' && github.event.inputs.create_release == 'true' }}
+    if: ${{ github.ref == 'refs/heads/main' && github.event.inputs.create_release == 'true' }}
     runs-on: ubuntu-latest
     needs: [build-chat-linux, build-chat-macos, build-chat-sdist, build-infer]
     steps:
