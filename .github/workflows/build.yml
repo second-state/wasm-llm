@@ -190,11 +190,13 @@ jobs:
         run: |
           bash deploy.sh
           echo "$HOME/.wasmedge/bin" >> $GITHUB_PATH
-
-      - name: Check WasmEdge Version
-        run: |
-          wasmedge --version
           which wasmedge
+          wasmedge --version
+
+      # - name: Check WasmEdge Version
+      #   run: |
+      #     wasmedge --version
+      #     which wasmedge
 
       - name: Build wheels
         uses: PyO3/maturin-action@v1
