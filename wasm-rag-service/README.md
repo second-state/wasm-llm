@@ -5,7 +5,7 @@
 ### Install Python packages
 
 ```bash
-cd wasm-rag
+cd wasm-rag-service
 pip install -r requirements.txt
 ```
 
@@ -17,6 +17,4 @@ pip install -r requirements.txt
   - `poppler-utils` (images and PDFs)
   - `tesseract-ocr` (images and PDFs, install tesseract-lang for additional language support)
   - `libreoffice` (MS Office docs)
-  - `pandoc`` (EPUBs, RTFs and Open Office docs)
-
-- For suggestions on how to install on the Windows and to learn about dependencies for other features, see the installation documentation [here](https://unstructured-io.github.io/unstructured/installing.html).
+  - `pandoc` (EPUBs, RTFs and Open Office docs)
