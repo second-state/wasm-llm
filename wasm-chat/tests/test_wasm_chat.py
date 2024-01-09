@@ -26,7 +26,7 @@ def remove_downloaded(file: str) -> None:
 
 def test_wasm_chat():
     model_file = get_model(
-        "https://huggingface.co/second-state/Llama-2-7B-Chat-GGUF/resolve/main/llama-2-7b-chat.Q5_K_M.gguf"
+        "https://huggingface.co/second-state/TinyLlama-1.1B-Chat-v1.0-GGUF/resolve/main/tinyllama-1.1b-chat-v1.0.Q5_K_M.gguf"
     )
 
     # init wasm environment
