@@ -19,7 +19,7 @@ from langchain.document_loaders import (
 from langchain.embeddings import GPT4AllEmbeddings
 from langchain.schema.messages import AIMessage, HumanMessage, SystemMessage
 from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain_community.chat_models.wasm_chat import WasmChatService
+from langchain_community.chat_models.llama_edge import LlamaChatService
 
 st.set_page_config(layout="wide", page_title="Wasm Chat")
 
@@ -28,6 +28,7 @@ DEFAULT_SERVICE_URL = "http://127.0.0.1:8080"
 
 OPTION_SERVICE_URL_DEFAULT = "Use default service"
 OPTION_SERVICE_URL_CUSTOM = "Use custom service"
+REQUEST_TIMEOUT = 600
 
 
 def write_message(user, message):
@@ -66,7 +67,11 @@ with st.sidebar:
 
     if st.button("Connect"):
         if "wasm_chat" not in st.session_state:
-            st.session_state.wasm_chat = WasmChatService(service_url=service_url)
+            st.session_state.wasm_chat = LlamaChatService(
+                service_url=service_url,
+                request_timeout=REQUEST_TIMEOUT,
+                # streaming=True,
+            )
             st.session_state.start_chat = True
 
 if st.session_state.start_chat:
@@ -152,7 +157,7 @@ if st.session_state.start_chat:
             st.session_state.messages.append(user_message)
 
             with st.chat_message("assistant"):
-                # query
+                # * query
                 result = st.session_state.qa(prompt)
                 ai_message, docs = result["result"], result["source_documents"]
                 st.markdown(ai_message)
@@ -166,3 +171,12 @@ if st.session_state.start_chat:
                     print("\n[SOURCE] " + document.metadata["source"] + ":\n")
                     print(document.page_content)
                 print("\n", "#" * 30, "Sources", "#" * 30)
+
+                # # * query in streaming mode
+                # for chunk in st.session_state.qa.stream(
+                #     {
+                #         "query": prompt,
+                #     }
+                # ):
+                #     print(f"[DEBUG] token: {chunk}")
+                #     st.markdown(chunk["result"])
