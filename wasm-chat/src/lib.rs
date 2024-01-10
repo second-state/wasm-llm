@@ -155,9 +155,6 @@ pub struct Metadata {
     #[serde(rename = "enable-log")]
     log_enable: bool,
     #[pyo3(get)]
-    #[serde(rename = "stream-stdout")]
-    stream_stdout: bool,
-    #[pyo3(get)]
     #[serde(rename = "ctx-size")]
     ctx_size: u64,
     #[pyo3(get)]
@@ -176,10 +173,9 @@ pub struct Metadata {
 #[pymethods]
 impl Metadata {
     #[new]
-    #[pyo3(signature = (log_enable=false, stream_stdout=false, ctx_size=4096, n_predict=1024, n_gpu_layers=100, batch_size=4096, reverse_prompt=None))]
+    #[pyo3(signature = (log_enable=false, ctx_size=4096, n_predict=1024, n_gpu_layers=100, batch_size=4096, reverse_prompt=None))]
     fn new(
         log_enable: bool,
-        stream_stdout: bool,
         ctx_size: u64,
         n_predict: u64,
         n_gpu_layers: u64,
@@ -188,7 +184,6 @@ impl Metadata {
     ) -> Self {
         Metadata {
             log_enable,
-            stream_stdout,
             ctx_size,
             n_predict,
             n_gpu_layers,
