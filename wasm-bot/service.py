@@ -7,7 +7,7 @@ import streamlit as st
 
 sys.path.append("/Volumes/Dev/secondstate/me/langchain/libs/langchain")
 
-from langchain_community.chat_models.wasm_chat import WasmChatService
+from langchain_community.chat_models.llama_edge import LlamaChatService
 from langchain_core.messages import AIMessage, HumanMessage, SystemMessage
 
 st.set_page_config(layout="wide", page_title="Wasm Chat")
@@ -44,8 +44,8 @@ with st.sidebar:
     )
 
     if service_option == SERVICE_URL_DEFAULT:
-        st.session_state.wasm_chat = WasmChatService(
-            service_url=service_url, request_timeout=REQUEST_TIMEOUT
+        st.session_state.wasm_chat = LlamaChatService(
+            service_url=service_url, request_timeout=REQUEST_TIMEOUT, streaming=True
         )
         st.session_state.start_chat = True
     # base-input
@@ -56,10 +56,13 @@ with st.sidebar:
         if not title:
             st.session_state.start_chat = False
         else:
-            st.session_state.wasm_chat = WasmChatService(
-                service_url=title, request_timeout=REQUEST_TIMEOUT
+            st.session_state.wasm_chat = LlamaChatService(
+                service_url=title,
+                request_timeout=REQUEST_TIMEOUT,
+                streaming=True,
             )
             st.session_state.start_chat = True
+
     else:
         raise ValueError("Unsupported service option!")
 
@@ -89,9 +92,24 @@ if st.session_state.start_chat:
         user_message = HumanMessage(content=prompt)
         st.session_state.messages.append(user_message)
 
+        # * non-streaming mode
+        # with st.chat_message("assistant"):
+        #     # invoke wasm_chat
+        #     ai_message = st.session_state.wasm_chat(st.session_state.messages)
+        #     st.markdown(ai_message.content)
+        #     # Add assistant response to chat history
+        #     st.session_state.messages.append(ai_message)
+
+        # * streaming mode
         with st.chat_message("assistant"):
-            # invoke wasm_chat
-            ai_message = st.session_state.wasm_chat(st.session_state.messages)
-            st.markdown(ai_message.content)
-            # Add assistant response to chat history
+            message_placeholder = st.empty()
+            full_response = ""
+            for chunk in st.session_state.wasm_chat.stream(st.session_state.messages):
+                print(f"[DEBUG] token: {chunk.content}")
+                full_response += chunk.content
+                time.sleep(0.05)
+                message_placeholder.markdown(full_response + "▌")
+            message_placeholder.markdown(full_response)
+
+            ai_message = AIMessage(content=full_response)
             st.session_state.messages.append(ai_message)
