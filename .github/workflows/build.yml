@@ -91,6 +91,13 @@ jobs:
           pip install maturin[patchelf]
           pip list installed
 
+      - name: Build wasm-infer
+        id: build_wasm_infer
+        run: |
+          cd wasm-infer
+          cargo build --target wasm32-wasi --release
+          cp ./target/wasm32-wasi/release/wasm_infer.wasm /github/home/.wasmedge/wasm/wasm_infer.wasm
+
       - name: Build wheels
         working-directory: wasm-chat
         shell: bash -l {0}
