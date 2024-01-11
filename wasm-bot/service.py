@@ -35,7 +35,7 @@ if "start_chat" not in st.session_state:
     st.session_state.start_chat = False
 
 with st.sidebar:
-    st.image("assets/logo.png")
+    st.image("assets/logo.svg")
     st.subheader("", divider="grey")
     st.write("")
 
