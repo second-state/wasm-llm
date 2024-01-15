@@ -7,7 +7,7 @@ import streamlit as st
 
 sys.path.append("/Volumes/Dev/secondstate/me/langchain/libs/langchain")
 
-from langchain_community.chat_models.llama_edge import LlamaChatService
+from langchain_community.chat_models.llama_edge import LlamaEdgeChatService
 from langchain_core.messages import AIMessage, HumanMessage, SystemMessage
 
 st.set_page_config(layout="wide", page_title="Wasm Chat")
@@ -44,7 +44,7 @@ with st.sidebar:
     )
 
     if service_option == SERVICE_URL_DEFAULT:
-        st.session_state.wasm_chat = LlamaChatService(
+        st.session_state.wasm_chat = LlamaEdgeChatService(
             service_url=service_url, request_timeout=REQUEST_TIMEOUT, streaming=True
         )
         st.session_state.start_chat = True
@@ -56,7 +56,7 @@ with st.sidebar:
         if not title:
             st.session_state.start_chat = False
         else:
-            st.session_state.wasm_chat = LlamaChatService(
+            st.session_state.wasm_chat = LlamaEdgeChatService(
                 service_url=title,
                 request_timeout=REQUEST_TIMEOUT,
                 streaming=True,
