@@ -19,7 +19,7 @@ from langchain.document_loaders import (
 from langchain.embeddings import GPT4AllEmbeddings
 from langchain.schema.messages import AIMessage, HumanMessage, SystemMessage
 from langchain.text_splitter import RecursiveCharacterTextSplitter
-from langchain_community.chat_models.llama_edge import LlamaChatService
+from langchain_community.chat_models.llama_edge import LlamaEdgeChatService
 
 st.set_page_config(layout="wide", page_title="Wasm Chat")
 
@@ -67,7 +67,7 @@ with st.sidebar:
 
     if st.button("Connect"):
         if "wasm_chat" not in st.session_state:
-            st.session_state.wasm_chat = LlamaChatService(
+            st.session_state.wasm_chat = LlamaEdgeChatService(
                 service_url=service_url,
                 request_timeout=REQUEST_TIMEOUT,
                 # streaming=True,
