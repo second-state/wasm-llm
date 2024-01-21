@@ -105,7 +105,7 @@ if st.session_state.start_chat:
             message_placeholder = st.empty()
             full_response = ""
             for chunk in st.session_state.wasm_chat.stream(st.session_state.messages):
-                print(f"[DEBUG] token: {chunk.content}")
+                # print(f"[DEBUG] token: {chunk.content}")
                 full_response += chunk.content
                 time.sleep(0.05)
                 message_placeholder.markdown(full_response + "▌")
