@@ -1,1 +1,3 @@
-streamlit
+langchain==0.1.1
+langchain-community==0.0.13
+streamlit==1.30.0
