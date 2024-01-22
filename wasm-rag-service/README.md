@@ -1,4 +1,4 @@
-# Wasm-RAG
+# WasmRAG
 
 ## Prepare Environment
 
@@ -11,6 +11,10 @@
   ```
 
   [>> Click to watch Youtube video of Deploying LlamaEdge API Server with run-llm script <<](https://www.youtube.com/watch?v=fu_sM4uSLsI)
+
+  Note that not all LLMs are suitable for RAG. The following LLMs are known to work with RAG:
+
+  - [second-state/Llama-2-13B-Chat-GGUF](https://huggingface.co/second-state/Llama-2-13B-Chat-GGUF)
 
 ### Git clone the repo
 
@@ -44,9 +48,9 @@
 
 ## Usage
 
-### Execute wasm-rag app
+### Execute WasmRAG app
 
-- Start the chatbot
+- Start WasmRAG app
 
   ```console
   cd wasm-rag-service
@@ -54,7 +58,7 @@
   streamlit run app.py
   ```
 
-  If the chatbot is started successfully, you will see the following message:
+  If the app is started successfully, you will see the following message in the console:
 
   ```console
   You can now view your Streamlit app in your browser.
@@ -62,6 +66,29 @@
   Local URL: http://localhost:8501
   Network URL: http://192.168.0.103:8501
   ```
+
+  In addition, a web page will be opened in your default browser:
+
+  <div align="center">
+  <img src="assets/image.png" width=80% />
+  </div>
+
+- Connect WasmRAG to LlamaEdge server
+
+  To connect WasmRAG to the LlamaEdge server, you need to set the `Select chat service` option in the web page to the IP address of the LlamaEdge server. For example, assume that the IP address and the port of the LlamaEdge server is `127.0.0.1:8080`, then you need to select `User custom service` option, input the service url: `http://localhost:8080`, and then press **Connect**. The following snapshot shows the chatbot connected to the local LlamaEdge server:
+
+  <div align="center">
+  <img src="assets/image-1.png" width=80% />
+  </div>
+
+- Let's chat
+
+  Now you can chat with the chatbot. For example, you can input `What is the capital of France?` and press **Return**. The chatbot will reply your question:
+
+  <div align="center">
+  <img src="assets/image-3.png" width=80% />
+  </div>
+
 <!--
 ### Install Python packages
 
