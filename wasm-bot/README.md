@@ -20,7 +20,11 @@ This is a GUI based chatbot app. It is driven by [LlamaEdge](https://github.com/
   bash <(curl -sSfL 'https://code.flows.network/webhook/iwYN1SdN3AmPgR5ao5Gt/run-llm.sh')
   ```
 
-  [Video for LlamaEdge API Server deployment on Youtube](https://youtu.be/fu_sM4uSLsI)
+  <!-- [Video for LlamaEdge API Server deployment on Youtube](https://youtu.be/fu_sM4uSLsI) -->
+
+  [![Deploy LlamaEdge API Server with run-llm script]
+(https://img.youtube.com/vi/fu_sM4uSLsI/maxresdefault.jpg)]
+(https://www.youtube.com/watch?v=fu_sM4uSLsI)
 
 - Git clone the repo
 
