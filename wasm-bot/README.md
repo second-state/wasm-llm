@@ -14,13 +14,13 @@ This is a GUI based chatbot app. It is driven by [LlamaEdge](https://github.com/
 
 - Prepare LlamaEdge API server
 
-  The `run-llm.sh` script provides a convenient way to download LLM models and llama-chat.wasm, deploy WasmEdge Runtime and the `wasi-nn_ggml` plguin. Run the following command to download `run-llm.sh` and execute it:
+  The [run-llm.sh](https://github.com/second-state/LlamaEdge/raw/main/run-llm.sh) script provides an interactive way to deploy LlamaEdge API server. Run the following command and follow the prompts to download required assets and start up the LlamaEdge API server:
 
   ```console
   bash <(curl -sSfL 'https://code.flows.network/webhook/iwYN1SdN3AmPgR5ao5Gt/run-llm.sh')
   ```
 
-  Follow the prompts to select the LLM model you want to use, install WasmEdge Runtime, download LlamaEdge API server, set server options, and finally start up the server.
+  [Video for LlamaEdge API Server deployment on Youtube](https://youtu.be/fu_sM4uSLsI)
 
 - Git clone the repo
 
