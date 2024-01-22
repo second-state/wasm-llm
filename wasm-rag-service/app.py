@@ -1,31 +1,15 @@
 import os
-import sys
-import tempfile
-import time
-import urllib.request
-from io import BytesIO
 
 import streamlit as st
-
-sys.path.append("/home/ubuntu/workspace/langchain/libs/")
-
 from knowledgebase import DOCUMENT_SOURCE_DIRECTORY, MyKnowledgeBase
 from langchain.chains import RetrievalQA
-from langchain.document_loaders import (
-    DirectoryLoader,
-    PyPDFLoader,
-    UnstructuredFileLoader,
-)
-from langchain.embeddings import GPT4AllEmbeddings
 from langchain.schema.messages import AIMessage, HumanMessage, SystemMessage
-from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.chat_models.llama_edge import LlamaEdgeChatService
+from langchain_community.embeddings import GPT4AllEmbeddings
 
 st.set_page_config(layout="wide", page_title="Wasm Chat")
 
 DEFAULT_SERVICE_URL = "http://127.0.0.1:8080"
-
-
 OPTION_SERVICE_URL_DEFAULT = "Use default service"
 OPTION_SERVICE_URL_CUSTOM = "Use custom service"
 REQUEST_TIMEOUT = 600
@@ -58,8 +42,8 @@ with st.sidebar:
     elif service_option == OPTION_SERVICE_URL_CUSTOM:
         service_url = st.text_input(
             "Input service URL:",
-            value="http://127.0.0.1:8080",
-            help="http://127.0.0.1:8080",
+            value=DEFAULT_SERVICE_URL,
+            help=DEFAULT_SERVICE_URL,
         )
 
     else:
@@ -76,7 +60,7 @@ with st.sidebar:
 
 if st.session_state.start_chat:
     st.title("💬 WasmRAG")
-    st.caption("🚀 A RAG app powered by WasmEdge Runtime")
+    st.caption("🚀 A RAG app driven by LlamaEdge")
 
     if "uploaded_files" not in st.session_state:
         st.session_state.uploaded_files = []
