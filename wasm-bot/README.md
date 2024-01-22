@@ -2,8 +2,6 @@
 
 This is a GUI based chatbot app. It is driven by [LlamaEdge](https://github.com/second-state/LlamaEdge) that allows you to run LLMs locally or via API service.
 
-<!-- ![Alt text](image.png) -->
-
 <div align="center">
 <img src="assets/image.png" width=80% />
 </div>
@@ -20,7 +18,7 @@ This is a GUI based chatbot app. It is driven by [LlamaEdge](https://github.com/
   bash <(curl -sSfL 'https://code.flows.network/webhook/iwYN1SdN3AmPgR5ao5Gt/run-llm.sh')
   ```
 
-  [Youtube video for Deploying LlamaEdge API Server with run-llm script](https://www.youtube.com/watch?v=fu_sM4uSLsI)
+  [>> Click to watch Youtube video of Deploying LlamaEdge API Server with run-llm script <<](https://www.youtube.com/watch?v=fu_sM4uSLsI)
 
 - Git clone the repo
 
@@ -69,7 +67,6 @@ This is a GUI based chatbot app. It is driven by [LlamaEdge](https://github.com/
 
     And you may see a web page similar to the snapshot below opened in your browser:
 
-    <!-- ![Alt text](assets/image-1.png) -->
     <div align="center">
     <img src="assets/image-1.png" width=80% />
     </div>
@@ -78,7 +75,6 @@ This is a GUI based chatbot app. It is driven by [LlamaEdge](https://github.com/
 
   To connect the chatbot to the LlamaEdge server, you need to set the `Select chat service` option in the web page to the IP address of the LlamaEdge server. For example, assume that the IP address and the port of the LlamaEdge server is `127.0.0.1:8080`, then you need to select `User custom service` option, input the service url: `http://localhost:8080` and press **Return**. The following snapshot shows the chatbot connected to the local LlamaEdge server:
 
-  <!-- ![Alt text](assets/image-2.png) -->
   <div align="center">
   <img src="assets/image-2.png" width=80% />
   </div>
@@ -87,7 +83,6 @@ This is a GUI based chatbot app. It is driven by [LlamaEdge](https://github.com/
 
   Now you can chat with the chatbot. For example, you can input `What is the capital of France?` and press **Return**. The chatbot will reply your question:
 
-  <!-- ![Alt text](assets/image-3.png) -->
   <div align="center">
   <img src="assets/image-3.png" width=80% />
   </div>
