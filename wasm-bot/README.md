@@ -1,8 +1,6 @@
-# Chat Bot
+# ChatBot App
 
-![](./assets/preview.png)
-
-This is a GUI based chat bot app. It allows you to run LLMs locally.
+This is a GUI based chatbot app. It is driven by [LlamaEdge](https://github.com/second-state/LlamaEdge) that allows you to run LLMs locally or via API service.
 
 ## Usage
 
