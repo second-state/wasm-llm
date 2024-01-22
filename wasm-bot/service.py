@@ -68,7 +68,7 @@ with st.sidebar:
 
 
 st.title("💬 Wasmbot")
-st.caption("🚀hatbot powered by LlamaEdge!")
+st.caption("🚀 A chatbot powered by LlamaEdge!")
 write_message("assistant", "Hello 👋, how can I help you?")
 
 if st.session_state.start_chat:
