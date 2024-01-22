@@ -83,11 +83,9 @@
 
 - Let's chat
 
-  Now you can chat with the chatbot. For example, you can input `What is the capital of France?` and press **Return**. The chatbot will reply your question:
+  The following link leads to a Youtube video that shows how to chat with WasmRAG:
 
-  <div align="center">
-  <img src="assets/image-3.png" width=80% />
-  </div>
+  [>> Click to watch Youtube video of Chatting with WasmRAG <<](https://www.youtube.com/watch?v=cZclR9VK3B8)
 
 <!--
 ### Install Python packages
