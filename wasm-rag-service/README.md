@@ -20,7 +20,7 @@
 
   ```console
   git clone https://github.com/second-state/wasm-llm
-  cd wasm-bot
+  cd wasm-rag-service
   ```
 
 ### Install dependencies
