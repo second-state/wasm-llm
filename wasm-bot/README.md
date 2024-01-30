@@ -45,6 +45,7 @@ This is a GUI based chatbot app. It is driven by [LlamaEdge](https://github.com/
   - Install dependencies
 
     ```console
+    cd wasm-bot
     pip install -r requirements.txt
     ```
 
